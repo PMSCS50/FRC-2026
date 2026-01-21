@@ -1,10 +1,12 @@
+//FIIIIIIINAAAAAAAAAL FFFFFFFFLLLLLLLLLLAAAAAAAAAASSSSSSSSSSSSHHHHHHHHHHHHHHHHHHHHH!
+//if you see this then vscode automatically connects to github
+
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout
-    
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
