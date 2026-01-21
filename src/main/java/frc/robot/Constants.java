@@ -47,14 +47,7 @@ public final class Constants {
         public static final double l2_5 = 14.85;
       }
 
-      public static final class AlgaeRollersConstants{
-        public static final int lowerAlgaeRollersMotorCanId = 31;
-        public static final int upperAlgaeRollersMotorCanId = 32;
-    
-        public static final double maxSpeed = 0.6;
-      }
-
-      public static final class CoralRollersConstants{
+      public static final class ShooterConstants {
         public static final int chuteMotor1CanId = 51;
         public static final int chuteMotor2CanId = 52;
 
