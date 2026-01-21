@@ -23,8 +23,10 @@ public class VisionSubsystem extends SubsystemBase {
     private double targetSkew = 0.0;
     List<TargetCorner> targetCorners = new ArrayList<>();
     double poseAmbiguity = 0.0;
-    //When camera is mounted, set cameraToRobot
+    //When camera is mounted, set these variables
     Pose3d cameraToRobot;
+    double cameraHeightMeters;
+    double cameraPitchRadians;
     
     private int targetID = -1;
 
@@ -100,9 +102,15 @@ public class VisionSubsystem extends SubsystemBase {
         }
     }
 
+    /*
+    public double calcDistanceToTarget() {
+        return PhotonUtils.calculateDistanceToTargetMeters(double cameraHeightMeters, double targetHeightMeters, double cameraPitchRadians, double targetPitchRadians)
+    }
+    */
     
     
 }
+
 
 
 
