@@ -1,5 +1,7 @@
 //FIIIIIIINAAAAAAAAAL FFFFFFFFLLLLLLLLLLAAAAAAAAAASSSSSSSSSSSSHHHHHHHHHHHHHHHHHHHHH!
 //if you see this then vscode automatically connects to github
+//KAAAAAAAAAAAAAAAAAAMEEEEEEEEEEEEEEEEHAAAAAAAAAAAAAAAAAMEEEEEEEEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!
+//and if you see this, its vice versa
 
 package frc.robot.subsystems;
 
@@ -131,6 +133,7 @@ public class VisionSubsystem extends SubsystemBase {
     
     
 }
+
 
 
 
