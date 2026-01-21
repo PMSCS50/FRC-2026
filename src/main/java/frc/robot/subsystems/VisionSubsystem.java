@@ -1,8 +1,3 @@
-//FIIIIIIINAAAAAAAAAL FFFFFFFFLLLLLLLLLLAAAAAAAAAASSSSSSSSSSSSHHHHHHHHHHHHHHHHHHHHH!
-//if you see this then vscode automatically connects to github
-//KAAAAAAAAAAAAAAAAAAMEEEEEEEEEEEEEEEEHAAAAAAAAAAAAAAAAAMEEEEEEEEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!!!
-//and if you see this, its vice versa
-
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
@@ -29,16 +24,23 @@ public class VisionSubsystem extends SubsystemBase {
     private double targetSkew = 0.0;
     List<TargetCorner> targetCorners = new ArrayList<>();
     double poseAmbiguity = 0.0;
+
     //When camera is mounted, set these variables
     private Pose3d cameraToRobot;
     private final double cameraHeightMeters;
     private double cameraPitchRadians;
+
+    //Pipeline Indexes. Dont know if we will these but im putting them here just in case
+    public static final int APRILTAG_PIPELINE = 0;
+    public static final int TAPE_PIPELINE = 1;
+    public static final int DRIVER_PIPELINE = 2;
     
     private int targetID = -1;
 
     public VisionSubsystem(String cameraName) {
         camera = new PhotonCamera(cameraName);
     }
+
     
     //Pipeline setters and getters, not sure if we will actually use these.
     public void setPipeline(int index) {
@@ -122,7 +124,9 @@ public class VisionSubsystem extends SubsystemBase {
         return aprilTagFieldLayout.getTagPose(targetID).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(),tagPose,cameraToRobot));
     }
 
-    //WE NEED cameraHeightMeters and cameraPitchRadians. This method should stay commented until we know those two, and then we can also calculate targetHeightMeters afterward.
+    //WE NEED cameraHeightMeters and cameraPitchRadians to calculate distance to target
+    // This method should stay commented until the camera is properly mounted on the robot, 
+    // And then we can also calculate targetHeightMeters afterward.
     
     /*
     public double calcDistanceToTarget() {
