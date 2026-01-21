@@ -124,7 +124,7 @@ public class VisionSubsystem extends SubsystemBase {
         return aprilTagFieldLayout.getTagPose(targetID).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(),tagPose,cameraToRobot));
     }
 
-    //WE NEED cameraHeightMeters and cameraPitchRadians to calculate distance to target
+    // We Need cameraHeightMeters and cameraPitchRadians to calculate distance to target
     // This method should stay commented until the camera is properly mounted on the robot, 
     // And then we can also calculate targetHeightMeters afterward.
     
