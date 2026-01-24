@@ -64,7 +64,7 @@ public class FaceAprilTagRelative extends CommandBase {
             double yawRad = Math.toRadians(target.getYaw());
             
             omegaShenron = - yawRad * kPRotate; // sign may need to be flipped depending on camera convention
-            // optionally clamp omega if your drivetrain expects limits elsewhere
+            
         }
 
         drivetrain.setControl(
@@ -93,3 +93,4 @@ public class FaceAprilTagRelative extends CommandBase {
         return false;
     }
 }
+
