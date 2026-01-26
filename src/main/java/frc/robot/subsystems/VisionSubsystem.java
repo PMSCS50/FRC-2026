@@ -13,6 +13,8 @@ import org.photonvision.targeting.TargetCorner;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,7 +50,7 @@ public class VisionSubsystem extends SubsystemBase {
     private int targetID = -1;
 
     //gonna start trying to use this guy
-    public static photonEstimator = new PhotonPoseEstimator(aprilTagLayout, cameraToRobot);
+    public static photonEstimator = new PhotonPoseEstimator(aprilTagLayout, cameraToRobot.inverse());
     
 
     public VisionSubsystem(String cameraName) {
@@ -204,9 +206,45 @@ public class VisionSubsystem extends SubsystemBase {
         return PhotonUtils.calculateDistanceToTargetMeters(cameraHeightMeters, targetHeightMeters, cameraPitchRadians, targetPitchRadians);
     }
     */
+
     
+    public Optional<EstimatedRobotPose> estimateMultiTagPose() {
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        
+        for (var result : camera.getAllUnreadResults()) {
+            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            if (visionEst.isEmpty()) {
+                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+            }
+            updateEstimationStdDevs(visionEst, result.getTargets());
+            
+            //any part of the method past here may need some later reviewing
+            if (Robot.isSimulation()) {
+                visionEst.ifPresentOrElse(
+                        est ->
+                                getSimDebugField()
+                                        .getObject("VisionEstimation")
+                                        .setPose(est.estimatedPose.toPose2d()),
+                        () -> {
+                            getSimDebugField().getObject("VisionEstimation").setPoses();
+                        }
+                );
+            }
+
+            visionEst.ifPresent(
+                    est -> {
+                        // Change our trust in the measurement based on the tags we can see
+                        var estStdDevs = getEstimationStdDevs();
+
+                        estConsumer.accept(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+                    }
+            );
+        }
+        
+    }
     
     
 }
+
 
 
