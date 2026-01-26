@@ -90,6 +90,9 @@ public class VisionSubsystem extends SubsystemBase {
         return camera.getPipelineIndex();
     }
 
+    public PhotonPipelineResult getLatestResult() {
+        return camera.getLatestResult();
+    }
 
     @Override
     public void periodic() {
@@ -317,4 +320,5 @@ public class VisionSubsystem extends SubsystemBase {
 // Define isSimulation (in frc.robot.Robot, maybe in simulationInit or simulationPeriodic), getSimDebugField, and estConsumer - David
 // also robotToTarget
 // ill be AFK for a few hours
+
 
