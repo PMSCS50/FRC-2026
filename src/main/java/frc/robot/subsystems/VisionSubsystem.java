@@ -197,15 +197,14 @@ public class VisionSubsystem extends SubsystemBase {
         this.cameraPitchRadians = cameraPitchRadians;
     }
 
-    // We Need cameraHeightMeters and cameraPitchRadians to calculate distance to target
-    // This method should stay commented until the camera is properly mounted on the robot, 
+    // We Need cameraHeightMeters and cameraPitchRadians to calculate distance to target 
     // And then we can also calculate targetHeightMeters afterward.
     
-    /* 
+    
     public double calcDistanceToTarget(double cameraHeightMeters, double targetHeightMeters, double cameraPitchRadians, double targetPitchRadians) {
         return PhotonUtils.calculateDistanceToTargetMeters(cameraHeightMeters, targetHeightMeters, cameraPitchRadians, targetPitchRadians);
     }
-    */
+    
 
     
     public Optional<EstimatedRobotPose> estimateMultiTagPose() {
@@ -219,6 +218,7 @@ public class VisionSubsystem extends SubsystemBase {
             updateEstimationStdDevs(visionEst, result.getTargets());
             
             //any part of the method past here may need some later reviewing
+            //do we have something like Robot.isSimulation()?
             if (Robot.isSimulation()) {
                 visionEst.ifPresentOrElse(
                         est ->
@@ -240,11 +240,12 @@ public class VisionSubsystem extends SubsystemBase {
                     }
             );
         }
-        
+        return visionEst;
     }
     
     
 }
+
 
 
 
