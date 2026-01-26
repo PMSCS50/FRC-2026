@@ -1,11 +1,9 @@
-//final flash
-
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.HashMap;
+//import java.util.HashMap;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -16,16 +14,25 @@ import org.photonvision.targeting.TargetCorner;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+
 
 public class VisionSubsystem extends SubsystemBase {
 
     private final PhotonCamera camera;
     // CHECKSTYLE:OFF ConstantName
-    public static final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     
     private boolean hasTarget = false;
     
@@ -41,7 +48,8 @@ public class VisionSubsystem extends SubsystemBase {
 
     // When camera is mounted, set these variables
     Transform3d cameraToRobot = null;
-    Trnasform3d robotToTarget = null;
+    Transform3d robotToTarget = null;
+
     double cameraHeightMeters = 0.0;
     double cameraPitchRadians = 0.0;
 
@@ -53,11 +61,15 @@ public class VisionSubsystem extends SubsystemBase {
     private int targetID = -1;
 
     //gonna start trying to use this guy
-    public photonEstimator = new PhotonPoseEstimator(aprilTagLayout, cameraToRobot.inverse());
+    public PhotonPoseEstimator photonPoseEstimator;
+    private PoseStrategy poseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+
     
+    private Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));// Added by ChatGPT
 
     public VisionSubsystem(String cameraName) {
         camera = new PhotonCamera(cameraName);
+       
     }
 
     // Optional overload to supply camera-to-robot transform at construction
@@ -66,6 +78,7 @@ public class VisionSubsystem extends SubsystemBase {
         this.cameraToRobot = cameraToRobot;
         this.cameraHeightMeters = cameraHeightMeters;
         this.cameraPitchRadians = cameraPitchRadians;
+        this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout,poseStrategy,cameraToRobot);
     }
 
     // Pipeline setters and getters, not sure if we will actually use these.
@@ -96,12 +109,11 @@ public class VisionSubsystem extends SubsystemBase {
         targetPitch = target.getPitch();
         targetArea = target.getArea();
         targetSkew = target.getSkew();
-        targetCorners = target.getCorners();
+        //targetCorners = target.getCorners(); DOESNT EXIST
         poseAmbiguity = target.getPoseAmbiguity();
         
         targetID = target.getFiducialId();
     }
-
 
 
     public boolean hasTargets() {
@@ -137,8 +149,8 @@ public class VisionSubsystem extends SubsystemBase {
         return hasTarget && poseAmbiguity >= 0 && poseAmbiguity < maxAmbiguity;
     }
 
-    public Optional<Transform3d> getBestCameraToTarget() {
-        return hasTarget ? Optional.ofNullable(target.getBestCameraToTarget()) : Optional.empty();
+    public Transform3d getBestCameraToTarget() {
+        return hasTarget ? target.getBestCameraToTarget() : null;
     }
 
     /*
@@ -147,12 +159,18 @@ public class VisionSubsystem extends SubsystemBase {
     }
     */
     
-    public Optional<Transform3d> getBestRobotToTarget() {
+    public Transform3d getBestRobotToTarget() {
+        if (!hasTarget || cameraToRobot == null) {
+            return null;
+        }
+
         Transform3d cameraToTarget = target.getBestCameraToTarget();
         if (cameraToTarget == null) {
-            return Optional.empty();
+            return null;
         }
-        return hasTarget ? Optional.of(cameraToRobot.inverse().plus(cameraToTarget)) : Optional.empty()
+
+        robotToTarget = cameraToRobot.inverse().plus(cameraToTarget);
+        return robotToTarget;
     }
     
     public double getX() {
@@ -175,7 +193,7 @@ public class VisionSubsystem extends SubsystemBase {
             return Optional.empty();
         }
         
-        return aprilTagFieldLayout.getTagPose(targetID).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), tagPose, cameraToRobot));
+        return aprilTagLayout.getTagPose(targetID).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), tagPose, cameraToRobot));
     }
     
     //Fallback in case best target is ambiguous and we need to use a different one
@@ -184,7 +202,8 @@ public class VisionSubsystem extends SubsystemBase {
             return Optional.empty();
         }
         
-        return aprilTagFieldLayout.getTagPose(target1.getFiducialId()).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target1.getBestCameraToTarget(), tagPose, cameraToRobot));
+        // idk why but Kevin named it "aprilTagLayout" instead of "aprilTagFieldLayout" - David
+        return aprilTagLayout.getTagPose(target1.getFiducialId()).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target1.getBestCameraToTarget(), tagPose, cameraToRobot));
     }
 
     // setters for camera mount info
@@ -207,17 +226,62 @@ public class VisionSubsystem extends SubsystemBase {
     public double calcDistanceToTarget(double cameraHeightMeters, double targetHeightMeters, double cameraPitchRadians, double targetPitchRadians) {
         return PhotonUtils.calculateDistanceToTargetMeters(cameraHeightMeters, targetHeightMeters, cameraPitchRadians, targetPitchRadians);
     }
-    
 
-    
+    // ChatGPT says we need to create the updateEstimationStdDevs method - David
+
+    @SuppressWarnings("unused")
+    private void updateEstimationStdDevs(
+        Optional<EstimatedRobotPose> estimatedPose,
+        List<PhotonTrackedTarget> targets) {
+
+        // If we don't have a pose estimate, fall back to default noise
+        if (estimatedPose.isEmpty()) {
+            visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));
+            return;
+        }
+
+        int numTags = targets.size();
+
+        // Average distance from camera to visible AprilTags
+        double avgDist = 0.0;
+        for (PhotonTrackedTarget target : targets) {
+            avgDist += target.getBestCameraToTarget().getTranslation().getNorm();
+        }
+        avgDist /= numTags;
+
+        /*
+        * WPILib heuristic:
+        *  - More tags → more trust
+        *  - Closer tags → more trust
+        */
+        if (numTags >= 2) {
+            visionStdDevs = VecBuilder.fill(
+                    0.5 * avgDist,
+                    0.5 * avgDist,
+                    Math.toRadians(5));
+        } else {
+            visionStdDevs = VecBuilder.fill(
+                    1.0 * avgDist,
+                    1.0 * avgDist,
+                    Math.toRadians(10));
+        }
+    }
+
+    public Matrix<N3, N1> getEstimationStdDevs() {
+        return visionStdDevs;
+    }
+
+    // ChatGPT also says that we need to define estConsumer - David
+    /*
     public Optional<EstimatedRobotPose> estimateMultiTagPose() {
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         
         for (var result : camera.getAllUnreadResults()) {
-            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            visionEst = photonPoseEstimator.estimateCoprocMultiTagPose(result);
             if (visionEst.isEmpty()) {
-                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+                visionEst = photonPoseEstimator.estimateLowestAmbiguityPose(result);
             }
+
             updateEstimationStdDevs(visionEst, result.getTargets());
             
             //any part of the method past here may need some later reviewing
@@ -245,13 +309,12 @@ public class VisionSubsystem extends SubsystemBase {
         }
         return visionEst;
     }
-    
+    */
     
 }
 
 
-
-
-
-
+// Define isSimulation (in frc.robot.Robot, maybe in simulationInit or simulationPeriodic), getSimDebugField, and estConsumer - David
+// also robotToTarget
+// ill be AFK for a few hours
 
