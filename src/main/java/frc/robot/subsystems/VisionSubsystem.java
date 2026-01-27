@@ -26,6 +26,8 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.util.function.TriConsumer;
+
 
 
 public class VisionSubsystem extends SubsystemBase {
@@ -68,18 +70,24 @@ public class VisionSubsystem extends SubsystemBase {
     
     private Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));// Added by ChatGPT
 
+    private TriConsumer<Pose2d, Double, Matrix<N3, N1>> estConsumer = new TriConsumer<>();
+
+
+
     public VisionSubsystem(String cameraName) {
         camera = new PhotonCamera(cameraName);
        
     }
 
     // Optional overload to supply camera-to-robot transform at construction
-    public VisionSubsystem(String cameraName, Transform3d cameraToRobot, double cameraHeightMeters, double cameraPitchRadians) {
+    public VisionSubsystem(String cameraName, Transform3d cameraToRobot, double cameraHeightMeters, double cameraPitchRadians, TriConsumer<Pose2d, Double, Matrix<N3, N1>> estConsumer) {
+
         camera = new PhotonCamera(cameraName);
         this.cameraToRobot = cameraToRobot;
         this.cameraHeightMeters = cameraHeightMeters;
         this.cameraPitchRadians = cameraPitchRadians;
         this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout,poseStrategy,cameraToRobot);
+        this.estConsumer = estConsumer;
     }
 
     // Pipeline setters and getters, not sure if we will actually use these.
@@ -339,8 +347,11 @@ public class VisionSubsystem extends SubsystemBase {
 }
 
 
-// Define isSimulation (in frc.robot.Robot, maybe in simulationInit or simulationPeriodic), getSimDebugField, and estConsumer - David
-// also robotToTarget
+// Define 
+// isSimulation (in frc.robot.Robot, maybe in simulationInit or simulationPeriodic),
+// getSimDebugField,   
+// and estConsumer DONE
+// also robotToTarget DONE
 // ill be AFK for a few hours
 
 

@@ -16,6 +16,8 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  private Field2d simField;
+
   private final boolean kUseLimelight = false;
 
   public Robot() {
@@ -96,5 +98,16 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   @Override
+  public void simulationInit() {
+    simField = new Field2d();
+    SmartDashboard.putData("Field", simField);
+
+    // Reset drivetrain pose so sim starts clean
+    m_robotContainer.drivetrain.resetPose(m_robotContainer.drivetrain.getState().Pose);
+  }
+
+  @Override
   public void simulationPeriodic() {}
+
+
 }
