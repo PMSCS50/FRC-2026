@@ -10,6 +10,8 @@ import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 
+
+
 public class AimToBucket extends Command {
 
     private final CommandSwerveDrivetrain drivetrain;
@@ -55,22 +57,31 @@ public class AimToBucket extends Command {
         if (vision.hasTargets()) {
             dontSeeTargetTimer.reset();
 
-            double yaw = vision.getTargetYaw();
-            double distance = vision.getZ(); // meters
+            var targetOptional = result.getTargets().stream()
+                            .filter(t -> t.getFiducialId() == Constants.BUCKET_TAG_ID)
+                            .findFirst();
 
-            double rotSpeed = rotController.calculate(yaw);
+            if (targetOptional.isPresent()) {
+                var target = targetOptional.get();
+                dontSeeTargetTimer.reset();
+    
+                // 1. Get Distance (Direct 3D vector, ignores height constants)
+                var translation = target.getBestCameraToTarget().getTranslation();
+                double distance = translation.getNorm(); 
 
-            drivetrain.setControl(
-                drive.withRotationalRate(rotSpeed)
-            );
-
-            // AUTO FIRE WHEN ALIGNED
-            if (rotController.atSetpoint()) {
-                shooter.setVelocityFromDistance(distance);
-            } else {
-                shooter.stop();
+                double yaw = target.getYaw();  // 2. get dir to turn
+    
+                // 3. Control Loop
+                double rotSpeed = rotController.calculate(yaw);
+                drivetrain.setControl(drive.withRotationalRate(rotSpeed));
+    
+                if (rotController.atSetpoint()) {
+                    shooter.setVelocityFromDistance(distance);
+                } else {
+                    shooter.stop();
+                }
+                return; // Exit early since we found our target
             }
-
         } else {
             drivetrain.setControl(
                 drive.withRotationalRate(0)
