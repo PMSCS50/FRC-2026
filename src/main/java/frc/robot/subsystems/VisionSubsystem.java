@@ -304,44 +304,18 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     // ChatGPT also says that we need to define estConsumer - David
-    /*
+    
     public Optional<EstimatedRobotPose> estimateMultiTagPose() {
+
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        
+
         for (var result : camera.getAllUnreadResults()) {
             visionEst = photonPoseEstimator.estimateCoprocMultiTagPose(result);
-            if (visionEst.isEmpty()) {
-                visionEst = photonPoseEstimator.estimateLowestAmbiguityPose(result);
-            }
-
             updateEstimationStdDevs(visionEst, result.getTargets());
-            
-            //any part of the method past here may need some later reviewing
-            //do we have something like Robot.isSimulation()?
-            if (Robot.isSimulation()) {
-                visionEst.ifPresentOrElse(
-                        est ->
-                                getSimDebugField()
-                                        .getObject("VisionEstimation")
-                                        .setPose(est.estimatedPose.toPose2d()),
-                        () -> {
-                            getSimDebugField().getObject("VisionEstimation").setPoses();
-                        }
-                );
-            }
-
-            visionEst.ifPresent(
-                    est -> {
-                        // Change our trust in the measurement based on the tags we can see
-                        var estStdDevs = getEstimationStdDevs();
-
-                        estConsumer.accept(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-                    }
-            );
         }
+        
         return visionEst;
-    }
-    */
+    }    
 
     
 }

@@ -65,7 +65,7 @@ public class FaceAprilTagRelative extends Command {
             // target.getYaw() is in degrees (PhotonVision). Convert to radians.
             double yawRad = Math.toRadians(target.getYaw());
             
-            omegaShenron = -yawRad * kPRotate; 
+            omegaShenron = yawRad * kPRotate; 
             
         }
 
