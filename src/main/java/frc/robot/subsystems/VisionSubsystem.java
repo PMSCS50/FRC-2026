@@ -37,6 +37,7 @@ public class VisionSubsystem extends SubsystemBase {
     private boolean hasTarget = false;
     
     // idk if this is private but i will just put it here
+
     PhotonTrackedTarget target;
     
     private double targetYaw = 0.0;
@@ -83,7 +84,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     // Pipeline setters and getters, not sure if we will actually use these.
     public void setPipeline(int index) {
-        camera.setPipelineIndex(index);
+        caw4mera.setPipelineIndex(index);
     }
     
     public int getPipeline() {
@@ -103,9 +104,10 @@ public class VisionSubsystem extends SubsystemBase {
             targetID = -1;
             return;
         }
-
+        
+        targets  = result.getTargets()
         target = result.getBestTarget();
-
+        
         hasTarget = true;
         targetYaw = target.getYaw();
         
@@ -143,6 +145,26 @@ public class VisionSubsystem extends SubsystemBase {
         return hasTarget ? targetCorners : List.of();
     }
 
+    public double getTargetYaw(int targetID) {
+        return hasTarget ? targetYaw : 0.0;
+    }
+
+    public double getTargetPitch(int targetID) {
+        return hasTarget ? targetPitch : 0.0;
+    }
+
+    public double getTargetArea(int targetID) {
+        return hasTarget ? targetArea : 0.0
+    }
+
+    public double getTargetSkew(int targetID) {
+        return hasTarget ? targetSkew : 0.0;
+    }
+
+    public List<TargetCorner> getTargetCorners(int targetID) {
+        return hasTarget ? targetCorners : List.of();
+    }
+
     public int getTargetID() {
         return targetID;
     }
@@ -153,7 +175,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public Transform3d getBestCameraToTarget() {
-        return hasTarget ? target.getBestCameraToTarget() : null;
+        return hasTarget ? target.getBestCameraToTarget() : Transform3d.kZero;
     }
 
     /*
@@ -164,12 +186,12 @@ public class VisionSubsystem extends SubsystemBase {
     
     public Transform3d getBestRobotToTarget() {
         if (!hasTarget || cameraToRobot == null) {
-            return null;
+            return Transform3d.kZero;
         }
 
         Transform3d cameraToTarget = target.getBestCameraToTarget();
         if (cameraToTarget == null) {
-            return null;
+            return Transform3d.kZero;
         }
 
         robotToTarget = cameraToRobot.inverse().plus(cameraToTarget);
@@ -177,17 +199,17 @@ public class VisionSubsystem extends SubsystemBase {
     }
     
     public double getX() {
-        return robotToTarget != null ? robotToTarget.getX() : 0.0;
+        return robotToTarget != Transform3d.kZero ? robotToTarget.getX() : 0.0;
     }
     public double getY() {
-        return robotToTarget != null ? robotToTarget.getY() : 0.0;
+        return robotToTarget != Transform3d.kZero ? robotToTarget.getY() : 0.0;
     }
     public double getZ() {
-        return robotToTarget != null ? robotToTarget.getZ() : 0.0;
+        return robotToTarget != Transform3d.kZero ? robotToTarget.getZ() : 0.0;
     }
 
     public double getRot() {
-        return robotToTarget != null ? robotToTarget.getRotation().getZ() : 0.0;
+        return robotToTarget != Transform3d.kZero ? robotToTarget.getRotation().getZ() : 0.0;
     }
     
 
@@ -233,9 +255,8 @@ public class VisionSubsystem extends SubsystemBase {
     // ChatGPT says we need to create the updateEstimationStdDevs method - David
 
     @SuppressWarnings("unused")
-    private void updateEstimationStdDevs(
-        Optional<EstimatedRobotPose> estimatedPose,
-        List<PhotonTrackedTarget> targets) {
+    private void updateEstimationStdDevs(Optional<EstimatedRobotPose> estimatedPose,
+    List<PhotonTrackedTarget> targets) {
 
         // If we don't have a pose estimate, fall back to default noise
         if (estimatedPose.isEmpty()) {
@@ -313,6 +334,7 @@ public class VisionSubsystem extends SubsystemBase {
         return visionEst;
     }
     */
+   //suhas was here
     
 }
 
