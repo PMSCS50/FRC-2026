@@ -37,6 +37,14 @@ public class Shooter extends SubsystemBase {
 
     }
 
+    private double velocityFromDistance(double meters) {
+        return (meters + 4) * 100; // placeholder
+    }
+
+    public void setVelocityFromDistance(double meters) {
+        this.setVelocity(velocityFromDistance(meters));
+    }
+
     public void setVelocity(double newVelocity) {
         velocity = newVelocity;
         shooterMotor.set(velocity);
@@ -44,8 +52,11 @@ public class Shooter extends SubsystemBase {
 
     /** Stop the shooter. */
     public void stop() {
-        velocity = 0.0;
-        shooterMotor.set(velocity);
+        this.setVelocity(0.0);
+    }
+
+    public double getVelocity() {
+        return velocity;
     }
 
     /** Returns true if the shooter is currently running (non-zero velocity). */
