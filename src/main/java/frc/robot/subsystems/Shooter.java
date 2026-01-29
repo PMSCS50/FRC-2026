@@ -22,6 +22,7 @@ public class Shooter extends SubsystemBase {
 
     // Current commanded output (interpreted as percent output by SparkMax.set)
     private double velocity = 0.0;
+    private double shooterAngle = 20.0; //angle
 
     public Shooter() {
         shooterMotorConfig
@@ -38,7 +39,8 @@ public class Shooter extends SubsystemBase {
     }
 
     private double velocityFromDistance(double meters) {
-        return (meters + 4) * 100; // placeholder
+        double v = Math.sqrt(9.807 * meters / (sin(2*shooterAngle)));       
+        return v; // placeholder
     }
 
     public void setVelocityFromDistance(double meters) {
