@@ -83,7 +83,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("stopCoralRollers", new CoralAutoStop(coralroller));
         */
 
-        //NamedCommands.registerCommand("alignToReef", new PV_Align(cam1));
+        NamedCommands.registerCommand("alignToReef", new PV_Align(cam1));
         NamedCommands.registerCommand("faceAprilTag", new FaceAprilTagRelative(drivetrain, vision, xInput, yInput));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
