@@ -69,10 +69,11 @@ public class AimToBucket extends Command {
                 var translation = target.getBestCameraToTarget().getTranslation();
                 double distance = translation.getNorm(); 
 
-                double yaw = target.getYaw();  // 2. get dir to turn
+                double yaw = target.getw();
+                double pitch = target.getPitch();// 2. get pitch for shooter to turn
     
                 // 3. Control Loop
-                double rotSpeed = rotController.calculate(yaw);
+                double rotSpeed = rotController.calculate(pitch);
                 drivetrain.setControl(drive.withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
