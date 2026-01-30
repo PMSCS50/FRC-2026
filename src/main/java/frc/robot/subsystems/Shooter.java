@@ -12,6 +12,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
+import java.lang.Math;
+
 public class Shooter extends SubsystemBase {
     // Configuration for the shooter motor
     private final SparkMaxConfig shooterMotorConfig = new SparkMaxConfig();
@@ -42,19 +44,24 @@ public class Shooter extends SubsystemBase {
 
     }
 
+    //This should return the angle of the shooter in Degrees
+    public DutyCycleEncoder getHoodAngle() {
+        
+    }
+
     private double bestAngleFromDistance(double x, double y) {
         double minAngle = Math.toDegrees(Math.atan(2 * yDiff / x)); //safe, but not best angle.
         double phi_ideal = Math.atan(x/( Math.sqrt(x*x + (shooterHeight - y)*(shooterHeight - y)) + shooterHeight - y));
         //phi_ideal is angle that passes through (x,y) with the least velocity
         double phi = Math.max(minAngle, phi_ideal);
-        phi = Math.min(55.0,Math.max(phi,20.0));
+        phi = Math.min(Math.toRadians(55.0),Math.max(phi,Math.toRadians(20.0)));
         return phi;
     }
     
     
     //Will calculate velocity for trajectory to hit (x,y); 
     private double velocityFromDistance(double x, double y) {
-        double phi = shootingAngle;
+        double phi = Math.toRadians(shootingAngle);
         double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x*tan(phi) + shooterHeight - y)));       
         return v;
     }
@@ -71,6 +78,10 @@ public class Shooter extends SubsystemBase {
 
     public void setBestAngle(double newAngle) {
         shootingAngle = newAngle;
+    }
+
+    public void setBestAngleInRadians(double newAngle) {
+        shootingAngle = Math.toDegrees(newAngle);
     }
 
     /** Stop the shooter. */
