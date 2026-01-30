@@ -67,9 +67,12 @@ public class AimToBucket extends Command {
     
                 // 1. Get Distance (Direct 3D vector, ignores height constants)
                 var translation = target.getBestCameraToTarget().getTranslation();
-                double distance = translation.getNorm(); 
+                double dx = translation.getX(); //forward distance
+                double dy = translation.getZ(); //vertical distance 
+                
+                //double distance = translation.getNorm(); 
 
-                double yaw = target.getw();
+                double yaw = target.getYaw();
                 double pitch = target.getPitch();// 2. get pitch for shooter to turn
     
                 // 3. Control Loop
@@ -77,7 +80,8 @@ public class AimToBucket extends Command {
                 drivetrain.setControl(drive.withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
-                    shooter.setVelocityFromDistance(distance);
+                    shooter.setBestAngleFromDistance(dx,dy);
+                    shooter.setVelocityFromDistance(dx,dy);
                 } else {
                     shooter.stop();
                 }
