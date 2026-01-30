@@ -72,15 +72,14 @@ public class AimToBucket extends Command {
                 
                 //double distance = translation.getNorm(); 
 
-                double yaw = target.getYaw();
-                double pitch = target.getPitch();// 2. get pitch for shooter to turn
-    
+                double yaw = target.getYaw(); //2. get yaw for tobot to turn
+
                 // 3. Control Loop
                 double rotSpeed = rotController.calculate(yaw);
                 drivetrain.setControl(drive.withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
-                    shooter.setBestAngleInRadians(shooter.bestAngleFromDistance(dx,dy));
+                    shooter.setBestAngle(shooter.bestAngleFromDistance(dx,dy));
                     shooter.setVelocityFromDistance(dx,dy);
                 } else {
                     shooter.stop();
