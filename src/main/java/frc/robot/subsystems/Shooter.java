@@ -19,13 +19,14 @@ public class Shooter extends SubsystemBase {
 
     final SparkMax shooterMotor = new SparkMax(ShooterConstants.shooterMotorCanId, MotorType.kBrushless);
     final SparkMax kickerMotor = new SparkMax(ShooterConstants.kickbackMotorCanId, MotorType.kBrushless);
-    final SparkMax hoodMotor = new SparkMax(ShooterConstants.hoodedMotorCanId, MotorType.neo550);
+    final SparkMax hoodMotor = new SparkMax(ShooterConstants.hoodedMotorCanId, MotorType.kBrushless);
     //add more motors later
 
     // Current commanded output (interpreted as percent output by SparkMax.set)
     private double velocity = 0.0;
-    public double shooterAngle = 20.0; //angle
-    private double shooterHeight = 0.508; //How high is the shooter from the ground?
+    public double shootingAngle = 55.0; //Actual ideal shooting angle
+    public double shooterAngle = 20.0; //shooter current angle
+    private double shooterHeight = 0.508; //How high the shooter is from the ground (meters)
 
     public Shooter() {
         shooterMotorConfig
@@ -53,7 +54,7 @@ public class Shooter extends SubsystemBase {
     
     //Will calculate velocity for trajectory to hit (x,y); 
     private double velocityFromDistance(double x, double y) {
-        double phi = shooterAngle;
+        double phi = shootingAngle;
         double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x*tan(phi) + shooterHeight - y)));       
         return v;
     }
@@ -69,7 +70,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setBestAngle(double newAngle) {
-        shooterAngle = newAngle;
+        shootingAngle = newAngle;
     }
 
     /** Stop the shooter. */
