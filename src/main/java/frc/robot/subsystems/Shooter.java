@@ -38,6 +38,17 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
 
     }
+
+    private double bestAngleFromDistance(double x, double y) {
+        double minAngle = Math.toDegrees(Math.atan(2 * yDiff / x)); //safe, but not best angle.
+        double phi_ideal = Math.atan(x/( Math.sqrt(x*x + (shooterHeight - y)*(shooterHeight - y)) + shooterHeight - y));
+        //phi_ideal is angle that passes through (x,y) with the least velocity
+        double phi = Math.max(minAngle, phi_ideal);
+        phi = Math.min(55.0,Math.max(phi,20.0));
+        return phi;
+    }
+    
+    
     //Will calculate velocity for trajectory to hit (x,y); 
     private double velocityFromDistance(double x, double y) {
         double phi = shooterAngle;
@@ -45,13 +56,18 @@ public class Shooter extends SubsystemBase {
         return v;
     }
 
-    public void setVelocityFromDistance(double meters) {
-        this.setVelocity(velocityFromDistance(meters));
+    public void setVelocityFromDistance(double x, double y) {
+        this.setVelocity(velocityFromDistance(x,y));
     }
+    
 
     public void setVelocity(double newVelocity) {
         velocity = newVelocity;
         shooterMotor.set(velocity);
+    }
+
+    public void setBestAngle(double newAngle) {
+        shooterAngle = newAngle;
     }
 
     /** Stop the shooter. */
