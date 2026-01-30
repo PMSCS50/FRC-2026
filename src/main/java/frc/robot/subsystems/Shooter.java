@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.math.MathUtil;
 
 import java.lang.Math;
 
@@ -19,6 +20,7 @@ import java.lang.Math;
 TODO:
 Initialize other motorrCanIDs and hootEncoderDIO.
 Also configure other motors
+Initialize wheelRadius and max speed.
 
 
 */ 
@@ -65,7 +67,23 @@ public class Shooter extends SubsystemBase {
 
     public void setVelocity(double newVelocity) {
         velocity = newVelocity;
-        shooterMotor.set(velocity);
+        shooterMotor.set(convertToRPM(velocity));
+    }
+
+    private double convertToRPM(double velocity) {
+        /*
+        double wheelRadius = 0.0508; 
+        
+        double wheelRPM = (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
+
+        double maxWheelRPM = 5676.0 / ShooterConstants.GEAR_RATIO;
+
+        double percentOutput = MathUtil.clamp(wheelRPM / maxWheelRPM, 0.0, 1.0);
+
+        return percentOutput;
+
+        */
+        return 0.0;
     }
 
 
