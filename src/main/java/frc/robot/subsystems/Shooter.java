@@ -22,6 +22,7 @@ Initialize other motorrCanIDs and hootEncoderDIO.
 Also configure other motors
 Initialize wheelRadius and max speed.
 
+FINISH convertToRPM();
 
 */ 
 
@@ -65,31 +66,30 @@ public class Shooter extends SubsystemBase {
     }
     
 
-    public void setVelocity(double newVelocity) {
+    public void setShootingVelocity(double newVelocity) {
         velocity = newVelocity;
         shooterMotor.set(convertToRPM(velocity));
     }
 
+    
+    //WE REALLY NEED TO UPDATE THIS
     private double convertToRPM(double velocity) {
-        /*
+        //Placeholder (2 inches). Fill this in with real dimensions
         double wheelRadius = 0.0508; 
         
         double wheelRPM = (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
-
+        //This is FREE maxwheelRPM. Replace with reduced one
         double maxWheelRPM = 5676.0;
 
         double percentOutput = MathUtil.clamp(wheelRPM / maxWheelRPM, 0.0, 1.0);
-
         return percentOutput;
 
-        */
-        return 0.0;
     }
 
 
     /** Stop the shooter. */
     public void stop() {
-        this.setVelocity(0.0);
+        this.setShootingVelocity(0.0);
     }
 
     public double getVelocity() {
