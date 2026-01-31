@@ -68,8 +68,9 @@ public class AimToBucket extends Command {
                 // 1. Get Distance (Direct 3D vector, ignores height constants)
                 var translation = target.getBestCameraToTarget().getTranslation();
                 double dx = translation.getX() + 28.908282 ; //forward distance to hub (dist to apriltag + dist to hub);
+                double dy = translation.getY(); //horizontal distance to the hub
                 
-                //double distance = translation.getNorm(); 
+                double distance = dx*dx + dy*dy; 
 
                 double yaw = target.getYaw(); //2. get yaw for tobot to turn
 
@@ -78,7 +79,7 @@ public class AimToBucket extends Command {
                 drivetrain.setControl(drive.withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
-                    shooter.setVelocityFromDistance(dx);
+                    shooter.setVelocityFromDistance(distance);
                 } else {
                     shooter.stop();
                 }
