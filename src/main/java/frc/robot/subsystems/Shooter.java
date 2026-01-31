@@ -18,11 +18,9 @@ import java.lang.Math;
 
 /*
 TODO:
-Initialize other motorrCanIDs and hootEncoderDIO.
-Also configure other motors
-Initialize wheelRadius and max speed.
-
-FINISH convertToRPM();
+Initialize other motorrCanIDs and configure the kickerMotor and hoodMotor
+Initialize wheelRadius and find the max speed of a SparkMax with the FUEL inside.
+Finish convertToRPM();
 
 */ 
 
@@ -32,7 +30,7 @@ public class Shooter extends SubsystemBase {
 
 
     final SparkMax shooterMotor = new SparkMax(ShooterConstants.shooterMotorCanId, MotorType.kBrushless);
-    final SparkMax kickerMotor = new SparkMax(ShooterConstants.kickbackMotorCanId, MotorType.kBrushless);
+    final SparkMax kickerMotor = new SparkMax(ShooterConstants.kickerMotorCanId, MotorType.kBrushless);
     final SparkMax hoodMotor = new SparkMax(ShooterConstants.hoodedMotorCanId, MotorType.kBrushless);
 
     // Current commanded output (interpreted as percent output by SparkMax.set)
@@ -73,7 +71,7 @@ public class Shooter extends SubsystemBase {
     }
 
     
-    //WE REALLY NEED TO UPDATE THIS
+    //We need to finish this
     private double convertToRPM(double velocity) {
         //Placeholder (2 inches). Fill this in with real dimensions
         double wheelRadius = 0.0508; 
