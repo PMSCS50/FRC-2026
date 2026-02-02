@@ -52,9 +52,9 @@ public class Shooter extends SubsystemBase {
 
     }    
     
-    //Will calculate velocity for trajectory to get in shooter given distance. Y value is fixed); 
+    //Calculates velocity for trajectory to get in shooter given distance. Y value is fixed); 
     private double velocityFromDistance(double x) {
-        double y = 1.8288;
+        double y = 1.49098; // y distance from shooter to hub. Fixed height
         double phi = Math.toRadians(shooterAngle);
         double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x*tan(phi) + shooterHeight - y)));       
         return v;
@@ -74,9 +74,10 @@ public class Shooter extends SubsystemBase {
     //We need to finish this
     private double convertToRPM(double velocity) {
         //Placeholder (2 inches). Fill this in with real dimensions
-        double wheelRadius = 0.0508; 
+        double wheelRadius = 0.0508;
+        double k = 1.1; //this constant should try to negate energy loss or smth 
         
-        double wheelRPM = (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
+        double wheelRPM = k * (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
         //This is FREE maxwheelRPM. Replace with reduced one
         double maxWheelRPM = 5676.0;
 
