@@ -28,11 +28,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.function.TriConsumer;
 
-/* TODO:
-    Define 
-    isSimulation (in frc.robot.Robot, maybe in simulationInit or simulationPeriodic),
-    getSimDebugField,   
-*/
+//I think we are done here.
 
 
 public class VisionSubsystem extends SubsystemBase {
