@@ -27,7 +27,7 @@ Finish convertToRPM();
 public class Shooter extends SubsystemBase {
     // Configuration for the shooter motor
     private final SparkMaxConfig shooterMotorConfig = new SparkMaxConfig();
-
+    private final SparkMaxConfig kickerMotorConfig = new SparkMaxConfig();
 
     final SparkMax shooterMotor = new SparkMax(Constants.ShooterConstants.shooterMotorCanId, MotorType.kBrushless);
     final SparkMax kickerMotor = new SparkMax(Constants.ShooterConstants.kickerMotorCanId, MotorType.kBrushless);
@@ -46,12 +46,12 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        shooterMotorConfig
+        kickerMotorConfig
             // .inverted(true)
             .idleMode(IdleMode.kCoast)
             .smartCurrentLimit(20);
 
-        shooterMotor.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        kickerMotor.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override

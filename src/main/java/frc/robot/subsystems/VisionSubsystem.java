@@ -54,6 +54,8 @@ public class VisionSubsystem extends SubsystemBase {
     Transform3d cameraToRobot = null;
     Transform3d robotToTarget = null;
 
+    
+
     double cameraHeightMeters = 0.0;
     double cameraPitchRadians = 0.0;
 
@@ -89,10 +91,11 @@ public class VisionSubsystem extends SubsystemBase {
         this.cameraHeightMeters = cameraHeightMeters;
         this.cameraPitchRadians = cameraPitchRadians;
         this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout,poseStrategy,cameraToRobot);
-        this.estConsumer = estConsumer;
+        // this.estConsumer = estConsumer;
     }
 
     // Pipeline setters and getters, not sure if we will actually use these.
+    /*
     public void setPipeline(int index) {
         camera.setPipelineIndex(index);
     }
@@ -100,11 +103,12 @@ public class VisionSubsystem extends SubsystemBase {
     public int getPipeline() {
         return camera.getPipelineIndex();
     }
+    */
 
     public PhotonPipelineResult getLatestResult() {
         return camera.getLatestResult();
     }
-
+    
     @Override
     public void periodic() {
         PhotonPipelineResult result = camera.getLatestResult();
@@ -121,12 +125,13 @@ public class VisionSubsystem extends SubsystemBase {
         hasTarget = true;
         targetYaw = target.getYaw();
         
-        targetPitch = target.getPitch();
-        targetArea = target.getArea();
-        targetSkew = target.getSkew();
-        //targetCorners = target.getCorners(); DOESNT EXIST
-        poseAmbiguity = target.getPoseAmbiguity();
+        // targetPitch = target.getPitch();
+        // targetArea = target.getArea();
+        // targetSkew = target.getSkew();
+        // targetCorners = target.getCorners(); DOESNT EXIST
+        // poseAmbiguity = target.getPoseAmbiguity();
         
+        robotToTarget = getBestRobotToTarget();
         targetID = target.getFiducialId();
     }
 
@@ -139,6 +144,9 @@ public class VisionSubsystem extends SubsystemBase {
         return hasTarget ? targetYaw : 0.0;
     }
 
+
+
+/*
     public double getTargetPitch() {
         return hasTarget ? targetPitch : 0.0;
     }
@@ -170,7 +178,7 @@ public class VisionSubsystem extends SubsystemBase {
     public double getTargetSkew(int targetID) {
         return hasTarget ? targetSkew : 0.0;
     }
-    */
+    
     public List<TargetCorner> getTargetCorners(int targetID) {
         return hasTarget ? targetCorners : List.of();
     }   
@@ -183,6 +191,7 @@ public class VisionSubsystem extends SubsystemBase {
     public boolean hasReliablePose(double maxAmbiguity) {
         return hasTarget && poseAmbiguity >= 0 && poseAmbiguity < maxAmbiguity;
     }
+    */
 
     public Transform3d getBestCameraToTarget() {
         return hasTarget ? target.getBestCameraToTarget() : Transform3d.kZero;
@@ -222,7 +231,13 @@ public class VisionSubsystem extends SubsystemBase {
         return robotToTarget != Transform3d.kZero ? robotToTarget.getRotation().getZ() : 0.0;
     }
     
+    /*
+    public double getX() {
+        return robotToTarget != null ? robotToTarget.getX() : 0.0;
 
+    }
+    
+    */
     public Optional<Pose3d> getFieldRelativePose() {
         if (!hasTarget || cameraToRobot == null) {
             return Optional.empty();

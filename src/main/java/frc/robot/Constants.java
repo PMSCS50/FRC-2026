@@ -47,6 +47,12 @@ public final class Constants {
         public static final double l2_5 = 14.85;
       }
 
+      public static final class ClimbConstants {
+        public static final int climbMotorCanId = 0;
+        public static final double climbSpeed = 0;
+        public static final double climbMax = 0;
+      }
+
       public static final class ShooterConstants {
         public static final int shooterMotorCanId = 0;
         public static final int kickerMotorCanId = 0;
