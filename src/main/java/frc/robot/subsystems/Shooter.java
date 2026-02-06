@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
 
     public void setShootingVelocity(double newVelocity) {
         velocity = newVelocity;
-        shooterMotor.set(convertToRPM(velocity));
+        shooterMotor.set(powerFromVelocity(velocity));
     }
 
     
@@ -91,6 +91,19 @@ public class Shooter extends SubsystemBase {
         double percentOutput = MathUtil.clamp(wheelRPM / maxWheelRPM, 0.0, 1.0);
         return percentOutput;
 
+    }
+
+    // Hopefully this will work since SparkMax and Kraken take power, not rpm nor velocity
+    private double powerFromVelocity(double velocity) {
+        //Kinetic energy: 0.5 pounds (in kg) * v^2
+        double k = 0.226796 * v*v;
+        //If we are shooting continuously, t_recovery = 1 / shotsPerSecond.
+        t_recovery = 1/2;
+        double power = k / t_recovery;
+        double efficiency = 0.87; //max efficiency of Krakenx60, 30 amps. Change depending on current
+        power /= efficiency;
+        //now we need some inertia calculations. im not done with this yet.
+        return power;
     }
 
 
