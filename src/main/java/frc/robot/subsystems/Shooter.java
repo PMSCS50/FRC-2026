@@ -37,6 +37,7 @@ public class Shooter extends SubsystemBase {
     private double velocity = 0.0;
     public double shooterAngle = 70.0; //shooter angle
     private double shooterHeight = 0.508; //How high the shooter is from the ground (meters)
+    private double voltage = 10; //temporary value
 
     public Shooter() {
         shooterMotorConfig
@@ -74,7 +75,7 @@ public class Shooter extends SubsystemBase {
 
     public void setShootingVelocity(double newVelocity) {
         velocity = newVelocity;
-        shooterMotor.set(powerFromVelocity(velocity));
+        shooterMotor.set(powerFromRPM(convertToRPM(velocity),voltage));
     }
 
     
@@ -85,24 +86,24 @@ public class Shooter extends SubsystemBase {
         double k = 1.1; //extra constant to try and account for energy loss
         
         double wheelRPM = k * (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
-        //This is FREE maxwheelRPM. Replace with reduced one
-        double maxWheelRPM = 5676.0;
 
-        double percentOutput = MathUtil.clamp(wheelRPM / maxWheelRPM, 0.0, 1.0);
-        return percentOutput;
+        return wheelRPM;
 
     }
 
     // Hopefully this will work since SparkMax and Kraken take power, not rpm nor velocity
-    private double powerFromVelocity(double velocity) {
-        //Kinetic energy: 0.5 pounds (in kg) * v^2
-        double k = 0.226796 * v*v;
-        //If we are shooting continuously, t_recovery = 1 / shotsPerSecond.
-        t_recovery = 1/2;
-        double power = k / t_recovery;
-        double efficiency = 0.87; //max efficiency of Krakenx60, 30 amps. Change depending on current
-        power /= efficiency;
-        //now we need some inertia calculations. im not done with this yet.
+    private double powerFromRPM(double rpm, double voltage) {
+        double maxRPM = 5640; //replace with v_f
+        double i_0 = 2.7; //replace with i_0
+        double i_s = 131; //replace with i_s
+        double t_s = 2.41; //replace with t_s (ts pmo)
+
+        double torque = t_s * (1 - rpm/maxRPM);
+        double current = ((1 - rpm/maxRPM) * (i_s - i_0) + i_0)/100;
+        double power = torque * (rpm * 2*Math.PI/60)/100;
+        double efficiency = power / (voltage * current);
+
+        power /= efficiency; 
         return power;
     }
 
