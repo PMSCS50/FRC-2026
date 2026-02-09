@@ -52,7 +52,7 @@ public class RobotContainer {
     
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
-    private PhotonCamera cam1 = new PhotonCamera("camera1_2585");
+    //private PhotonCamera cam1 = new PhotonCamera("camera1_2585"); we dont need this
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     private final CommandXboxController subjoystick = new CommandXboxController(1);
@@ -83,7 +83,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("stopCoralRollers", new CoralAutoStop(coralroller));
         */
 
-        NamedCommands.registerCommand("alignToReef", new PV_Align(cam1));
+        NamedCommands.registerCommand("alignToReef", new PV_Align(drivetrain, vision));
         NamedCommands.registerCommand("faceAprilTag", new FaceAprilTagRelative(drivetrain, vision, xInput, yInput));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
@@ -123,7 +123,7 @@ public class RobotContainer {
                 if (joystick.a().getAsBoolean() && vision.hasTargets() && vision.getTargetID() == 18) {
                     double kp = 1.5;
 
-                    turn = - kp * MaxAngularRate * Math.toRadians(vision.getTargetYaw()); 
+                    turn = -kp * MaxAngularRate * Math.toRadians(vision.getTargetYaw());
                 }
                 return drive
                     .withVelocityX(forward)

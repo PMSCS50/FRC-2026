@@ -58,7 +58,7 @@ public class AimToBucket extends Command {
             dontSeeTargetTimer.reset();
 
             var targetOptional = result.getTargets().stream()
-                            .filter(t -> t.getFiducialId() == Constants.BUCKET_TAG_ID)
+                            .filter(t -> t.getFiducialId() == Constants.HUB_TAG_ID)
                             .findFirst();
 
             if (targetOptional.isPresent()) {
@@ -75,7 +75,7 @@ public class AimToBucket extends Command {
                 double distance = Math.hypot(dx,dy); 
 
                 double yaw = target.getYaw(); //2. get yaw for tobot to turn
-
+            
                 // 3. Control Loop
                 double rotSpeed = rotController.calculate(yaw);
                 drivetrain.setControl(drive.withRotationalRate(rotSpeed));

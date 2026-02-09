@@ -56,7 +56,6 @@ public final class Constants {
       public static final class ShooterConstants {
         public static final int shooterMotorCanId = 0;
         public static final int kickerMotorCanId = 0;
-        public static final int hoodedMotorCanId = 0;
 
         public static final int coralRoller2CanId = 22;
     

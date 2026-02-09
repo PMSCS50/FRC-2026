@@ -39,13 +39,14 @@ public class Climb extends SubsystemBase {
         SmartDashboard.putNumber("Climb position", climbEncoder.getPosition());
     }
 
-    public void pull(){
-        // if(climbEncoder.getPosition() >= ClimbConstants.climbMax){
-        //     climbMotor.set(0);
-        // } else {
-        //     climbMotor.set(ClimbConstants.climbSpeed);
-        // }
+    public void pull() {
+        if(climbEncoder.getPosition() >= ClimbConstants.climbMax) {
+            climbMotor.set(0);
+        } else {
+            climbMotor.set(ClimbConstants.climbSpeed);
+        }
         climbMotor.set(ClimbConstants.climbSpeed);
+
     }
 
     public void stop(){
