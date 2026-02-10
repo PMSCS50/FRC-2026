@@ -1,50 +1,44 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class PV_Align extends Command {
 
-    private final PIDController xController =
-        new PIDController(0.4, 0, 0);   // forward
-    private final PIDController yController =
-        new PIDController(0.4, 0, 0);   // sideways
-    private final PIDController rotController =
-        new PIDController(0.4, 0, 0);   // yaw
-
     private final CommandSwerveDrivetrain drivetrain;
     private final VisionSubsystem vision;
+    private final int targetId;
 
+    private static final double DESIRED_DISTANCE_METERS = 1.0;
 
-    private final SwerveRequest.RobotCentric drive =
-            new SwerveRequest.RobotCentric();
+    private final PIDController xController = new PIDController(1, 0, 0);
+    private final PIDController yController = new PIDController(1, 0, 0);
+    private final PIDController rotController = new PIDController(0, 0, 0);
 
-    private Timer dontSeeTagTimer, stopTimer, idleTimer;
+    private final SwerveRequest.RobotCentric drive = new SwerveRequest.RobotCentric();
 
-    private static final int TARGET_TAG_ID = 18;
-
-     
-
-
-    public PV_Align(CommandSwerveDrivetrain drivetrain, VisionSubsystem vision) {
+    public PV_Align(
+        CommandSwerveDrivetrain drivetrain,
+        VisionSubsystem vision,
+        int targetId
+    ) {
         this.drivetrain = drivetrain;
         this.vision = vision;
-        xController.setSetpoint(-.25);
-        yController.setSetpoint(0.0);
-            rotController.setSetpoint(-1.0);
+        this.targetId = targetId;
 
-        xController.setTolerance(0.02);
-        yController.setTolerance(0.02);
-        rotController.setTolerance(0.25);
+        rotController.enableContinuousInput(-Math.PI, Math.PI);
 
-        addRequirements(drivetrain);
+        xController.setTolerance(10);
+        yController.setTolerance(.005);
+        rotController.setTolerance(Math.toRadians(100));
+
+        addRequirements(drivetrain, vision);
     }
 
     @Override
@@ -52,63 +46,47 @@ public class PV_Align extends Command {
         xController.reset();
         yController.reset();
         rotController.reset();
-
-        stopTimer = new Timer();
-        stopTimer.start();
-
-        dontSeeTagTimer = new Timer();
-        dontSeeTagTimer.start();
-
-        idleTimer = new Timer();
-        idleTimer.start();
     }
 
     @Override
     public void execute() {
+        SmartDashboard.putNumber("Vision X", vision.getX());
+        SmartDashboard.putNumber("Vision Y", vision.getY());
+        SmartDashboard.putNumber("Vision Yaw", vision.getYawRad());
 
-        if (vision.hasTargets() && vision.getTargetID() == TARGET_TAG_ID) {
-
-            dontSeeTagTimer.reset();
-
-           
-            SmartDashboard.putNumber("x", vision.getX());
-            SmartDashboard.putNumber("y", vision.getY());
-            SmartDashboard.putNumber("rot", vision.getRot());
-
-
-
-
-            
-            double xOut   = xController.calculate(vision.getX());
-            double yOut   = -yController.calculate(vision.getY());
-            double rotOut = rotController.calculate(vision.getRot());
-
-            drivetrain.setControl(
-                drive.withVelocityX(xOut)
-                     .withVelocityY(yOut)
-                     .withRotationalRate(rotOut)
-            );
-            if (!xController.atSetpoint()
-             || !yController.atSetpoint()
-             || !rotController.atSetpoint()) {
-                stopTimer.reset();
-            }
+        if (!vision.hasTarget(targetId)) {
+            drivetrain.setControl(new SwerveRequest.Idle());
+            return;
         }
-    }
 
-    @Override
-    public void end(boolean interrupted) {
+        double xVel = xController.calculate(
+            vision.getX(), DESIRED_DISTANCE_METERS
+        );
+
+        double yVel = yController.calculate(
+            vision.getY(), 0
+        );
+
+        double rotVel = rotController.calculate(
+            vision.getYawRad(), 0
+        );
+
         drivetrain.setControl(
-            drive.withVelocityX(0)
-                 .withVelocityY(0)
-                 .withRotationalRate(0)
+            drive.withVelocityX(-xVel)
+                 .withVelocityY(-yVel)
+                 .withRotationalRate(-rotVel)
         );
     }
 
     @Override
     public boolean isFinished() {
-        return dontSeeTagTimer.hasElapsed(Constants.DONT_SEE_TAG_WAIT_TIME)
-            || stopTimer.hasElapsed(Constants.POSE_VALIDATION_TIME)
-            || idleTimer.hasElapsed(5);
+        return xController.atSetpoint()
+            && yController.atSetpoint()
+            && rotController.atSetpoint();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        drivetrain.setControl(new SwerveRequest.Idle());
     }
 }

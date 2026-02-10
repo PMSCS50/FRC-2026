@@ -4,7 +4,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.ShooterConstants;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -29,8 +29,8 @@ public class Shooter extends SubsystemBase {
     private final SparkMaxConfig shooterMotorConfig = new SparkMaxConfig();
     private final SparkMaxConfig kickerMotorConfig = new SparkMaxConfig();
 
-    final SparkMax shooterMotor = new SparkMax(Constants.ShooterConstants.shooterMotorCanId, MotorType.kBrushless);
-    final SparkMax kickerMotor = new SparkMax(Constants.ShooterConstants.kickerMotorCanId, MotorType.kBrushless);
+    final SparkMax shooterMotor = new SparkMax(ShooterConstants.shooterMotorCanId, MotorType.kBrushless);
+    final SparkMax kickerMotor = new SparkMax(ShooterConstants.kickerMotorCanId, MotorType.kBrushless);
     
 
     // Current commanded output (interpreted as percent output by SparkMax.set)

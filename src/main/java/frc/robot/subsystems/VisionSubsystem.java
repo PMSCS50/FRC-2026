@@ -1,297 +1,80 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-//import java.util.HashMap;
-
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.targeting.TargetCorner;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.EstimatedRobotPose;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
-
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.util.function.TriConsumer;
-
-//I think we are done here.
-
 
 public class VisionSubsystem extends SubsystemBase {
 
     private final PhotonCamera camera;
 
-    public final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-    
+    // Robot → Camera
+    private static final Transform3d ROBOT_TO_CAMERA =
+        new Transform3d(
+            new Translation3d(0.23, 0.051, 0.25),
+            new Rotation3d(0, 0, 0)
+        );
+
     private boolean hasTarget = false;
-    
-    // idk if this is private but i will just put it here
-    PhotonTrackedTarget target;
-    
-    private double targetYaw = 0.0;
-    private double targetPitch = 0.0;
-    private double targetArea = 0.0;
-    private double targetSkew = 0.0;
-    private List<TargetCorner> targetCorners = new ArrayList<>();
-    private double poseAmbiguity = 0.0;
+    private int targetId = -1;
 
-    // When camera is mounted, set these variables
-    Transform3d cameraToRobot = null;
-    double cameraHeightMeters = 0.0;
-    double cameraPitchRadians = 0.0;
-    Transform3d robotToTarget = Transform3d.kZero;
-
-    // Pipeline Indexes. Dont know if we will use these but im putting them here just in case
-    public static final int APRILTAG_PIPELINE = 0;
-    public static final int TAPE_PIPELINE = 1;
-    public static final int DRIVER_PIPELINE = 2;
-    
-    private int targetID = -1;
-
-
-    public PhotonPoseEstimator photonPoseEstimator;
-    private PoseStrategy poseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-
-    
-    private Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));
-
-
-
+    // TAG → ROBOT (this is the important one)
+    private Transform3d tagToRobot = null;
 
     public VisionSubsystem(String cameraName) {
         camera = new PhotonCamera(cameraName);
-        this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout,poseStrategy,cameraToRobot);
     }
 
-    // Optional overload to supply camera-to-robot transform at construction
-    public VisionSubsystem(String cameraName, Transform3d cameraToRobot, double cameraHeightMeters, double cameraPitchRadians) {
-
-        camera = new PhotonCamera(cameraName);
-        this.cameraToRobot = cameraToRobot;
-        this.cameraHeightMeters = cameraHeightMeters;
-        this.cameraPitchRadians = cameraPitchRadians;
-        this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout,poseStrategy,cameraToRobot);
-    }
-
-    // Pipeline setters and getters, not sure if we will actually use these.
-    /*
-    public void setPipeline(int index) {
-        camera.setPipelineIndex(index);
-    }
-    
-    public int getPipeline() {
-        return camera.getPipelineIndex();
-    }
-    */
-
-    public PhotonPipelineResult getLatestResult() {
-        return camera.getLatestResult();
-    }
-    
     @Override
     public void periodic() {
         PhotonPipelineResult result = camera.getLatestResult();
 
         if (!result.hasTargets()) {
             hasTarget = false;
-            targetID = -1;
+            targetId = -1;
+            tagToRobot = null;
             return;
         }
-        
-        targets  = result.getTargets();
-        target = result.getBestTarget();
-        
+
+        PhotonTrackedTarget target = result.getBestTarget();
+
         hasTarget = true;
-        targetYaw = target.getYaw();
-        
-        // targetPitch = target.getPitch();
-        // targetArea = target.getArea();
-        // targetSkew = target.getSkew();
-        // targetCorners = target.getCorners(); DOESNT EXIST
-        // poseAmbiguity = target.getPoseAmbiguity();
-        
-        robotToTarget = getBestRobotToTarget();
-        targetID = target.getFiducialId();
+        targetId = target.getFiducialId();
+
+        // Camera → Tag
+        Transform3d cameraToTag = target.getBestCameraToTarget();
+
+        // Robot → Tag
+        Transform3d robotToTag = ROBOT_TO_CAMERA.plus(cameraToTag);
+
+        // Tag → Robot (MATCHES LIMELIGHT TARGET SPACE)
+        tagToRobot = robotToTag.inverse();
     }
 
-
-    public boolean hasTargets() {
-        return hasTarget;
+    public boolean hasTarget(int desiredId) {
+        return hasTarget && targetId == desiredId && tagToRobot != null;
     }
 
-    public double getTargetYaw() {
-        return hasTarget ? targetYaw : 0.0;
-    }
-
-
-
-/*
-    public double getTargetPitch() {
-        return hasTarget ? targetPitch : 0.0;
-    }
-
-    public double getTargetArea() {
-        return hasTarget ? targetArea : 0.0;
-    }
-
-    public double getTargetSkew() {
-        return hasTarget ? targetSkew : 0.0;
-    }
-
-    public List<TargetCorner> getTargetCorners() {
-        return hasTarget ? targetCorners : List.of();
-    }
-    
-    public List<TargetCorner> getTargetCorners(int targetID) {
-        return hasTarget ? targetCorners : List.of();
-    }   
-
-    public int getTargetID() {
-        return targetID;
-    }
-
-    // Checks how reliable the target info is based on poseAmbiguity
-    public boolean hasReliablePose(double maxAmbiguity) {
-        return hasTarget && poseAmbiguity >= 0 && poseAmbiguity < maxAmbiguity;
-    }
-    */
-
-    public Transform3d getBestCameraToTarget() {
-        return hasTarget ? target.getBestCameraToTarget() : Transform3d.kZero;
-    }
-
-  
-    public Transform3d getBestRobotToTarget() {
-        if (!hasTarget || cameraToRobot == null) {
-            return Transform3d.kZero;
-        }
-
-        Transform3d cameraToTarget = target.getBestCameraToTarget();
-        if (cameraToTarget == null) {
-            return Transform3d.kZero;
-        }
-
-        robotToTarget = cameraToRobot.inverse().plus(cameraToTarget);
-        return robotToTarget;
-    }
-    
+    // Forward/back relative to TAG (meters)
     public double getX() {
-        return robotToTarget != Transform3d.kZero ? robotToTarget.getX() : 0.0;
+        return tagToRobot != null ? tagToRobot.getX() : 0.0;
     }
+
+    // Left/right relative to TAG (meters)
     public double getY() {
-        return robotToTarget != Transform3d.kZero ? robotToTarget.getY() : 0.0;
-    }
-    public double getZ() {
-        return robotToTarget != Transform3d.kZero ? robotToTarget.getZ() : 0.0;
-    }
-
-    public double getRot() {
-        return robotToTarget != Transform3d.kZero ? robotToTarget.getRotation().getZ() : 0.0;
-    }
-
-    public Optional<Pose3d> getFieldRelativePose() {
-        if (!hasTarget) {
-            return Optional.empty();
-        }
-        
-        return aprilTagLayout.getTagPose(targetID).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), tagPose, cameraToRobot));
-    }
-    
-    //Fallback in case best target is ambiguous and we need to use a different one
-    public Optional<Pose3d> getFieldRelativePose(PhotonTrackedTarget target1) {
-        if (!hasTarget) {
-            return Optional.empty();
-        }
-        
-        
-        return aprilTagLayout.getTagPose(target1.getFiducialId()).map(tagPose -> PhotonUtils.estimateFieldToRobotAprilTag(target1.getBestCameraToTarget(), tagPose, cameraToRobot));
-    }
-
-    // setters for camera mount info
-    public void setCameraToRobot(Transform3d cameraToRobot) {
-        this.cameraToRobot = cameraToRobot;
-    }
-
-    public void setCameraHeightMeters(double cameraHeightMeters) {
-        this.cameraHeightMeters = cameraHeightMeters;
-    }
-
-    public void setCameraPitchRadians(double cameraPitchRadians) {
-        this.cameraPitchRadians = cameraPitchRadians;
+        return tagToRobot != null ? tagToRobot.getY() : 0.0;
     }
 
 
-    public double calcDistanceToTarget(double cameraHeightMeters, double targetHeightMeters, double cameraPitchRadians, double targetPitchRadians) {
-        return PhotonUtils.calculateDistanceToTargetMeters(cameraHeightMeters, targetHeightMeters, cameraPitchRadians, targetPitchRadians);
+    // Robot yaw relative to TAG (radians)
+    public double getYawRad() {
+        return tagToRobot != null
+            ? tagToRobot.getRotation().getZ()
+            : 0.0;
     }
-
-    //basically pose ambbiguity but for photonPoseEstimator
-    @SuppressWarnings("unused")
-    private void updateEstimationStdDevs(Optional<EstimatedRobotPose> estimatedPose,
-    List<PhotonTrackedTarget> targets) {
-
-        // If we don't have a pose estimate, fall back to default noise
-        if (estimatedPose.isEmpty()) {
-            visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));
-            return;
-        }
-
-        int numTags = targets.size();
-
-        // Average distance from camera to visible AprilTags
-        double avgDist = 0.0;
-        for (PhotonTrackedTarget target : targets) {
-            avgDist += target.getBestCameraToTarget().getTranslation().getNorm();
-        }
-        avgDist /= numTags;
-
-        if (numTags >= 2) {
-            visionStdDevs = VecBuilder.fill(
-                    0.5 * avgDist,
-                    0.5 * avgDist,
-                    Math.toRadians(5));
-        } else {
-            visionStdDevs = VecBuilder.fill(
-                    1.0 * avgDist,
-                    1.0 * avgDist,
-                    Math.toRadians(10));
-        }
-    }
-
-    public Matrix<N3, N1> getEstimationStdDevs() {
-        return visionStdDevs;
-    }
-
-    
-    public Optional<EstimatedRobotPose> estimateMultiTagPose() {
-
-        Optional<EstimatedRobotPose> visionEst = Optional.empty();
-
-        for (var result : camera.getAllUnreadResults()) {
-            visionEst = photonPoseEstimator.estimateCoprocMultiTagPose(result);
-            updateEstimationStdDevs(visionEst, result.getTargets());
-        }
-        
-        return visionEst;
-    }    
-
-    
 }
-
-
-
-
