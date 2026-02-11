@@ -44,7 +44,7 @@ public class Climb extends SubsystemBase {
         SmartDashboard.putBoolean("Climb limit switch HOOK", clawLimitSwitch.get())
         SmartDashboard.putBoolean("Climb limit switch TOP", limit2.get());
         SmartDashboard.putBoolean("Climb limit switch BOTTOM", limit3.get());
-        SmartDashboard.putNumber("Climb position", climbEncoder.getPosition());
+        SmartDashboard.putNumber("Climb position", getDistance());
     }
 
     public void pull(){
@@ -85,9 +85,11 @@ public class Climb extends SubsystemBase {
         return limitSwitchTop.get();
     }
     
-    //Do later
+    
     public double getDistance() {
-        return 0;
+        double climbMotorRadius = 0; //radius in inches
+        double distance = climbEncoder.getPosition() * 2 * Math.PI * climbMotorRadius;
+        return distance;
     }
 
 
