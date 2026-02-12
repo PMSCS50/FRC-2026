@@ -50,6 +50,10 @@ public class VisionSubsystem extends SubsystemBase {
         this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout, ROBOT_TO_CAMERA);
     }
 
+    public PhotonTrackedTarget getLatestResult() {
+        return camera.getLatestResult();
+    }
+
     @Override
     public void periodic() {
         PhotonPipelineResult result = camera.getLatestResult();
@@ -84,9 +88,9 @@ public class VisionSubsystem extends SubsystemBase {
     public Transform3d getRobotToTarget() {
         Transform3d cameraToTag = target.getBestCameraToTarget();
         if (cameraToTag == null) {
-            return Transform3d.kZero;
+            return null;
         }
-        return ROBOT_TO_CAMERA.plus(target.getBestCameraToTarget());
+        return ROBOT_TO_CAMERA.plus(cameraToTag);
     }
 
     // Forward/back relative to TAG (meters)

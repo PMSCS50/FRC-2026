@@ -75,7 +75,7 @@ public class Shooter extends SubsystemBase {
 
     public void setShootingVelocity(double newVelocity) {
         velocity = newVelocity;
-        shooterMotor.set(powerFromRPM(convertToRPM(velocity),voltage));
+        shooterMotor.getClosedLoopController().setReference(convertToRPM(velocity),ControlType.kVelocity);
     }
 
     
@@ -83,9 +83,9 @@ public class Shooter extends SubsystemBase {
     private double convertToRPM(double velocity) {
 
         double wheelRadius = 0.0508;
-        double k = 1.1; //extra constant to try and account for energy loss
+        double kp = 1.3; //extra constant to try and account for energy loss
         
-        double wheelRPM = k * (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
+        double wheelRPM = kp * (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
 
         return wheelRPM;
 

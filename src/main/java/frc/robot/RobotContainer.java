@@ -123,7 +123,7 @@ public class RobotContainer {
                 if (joystick.a().getAsBoolean() && vision.hasTargets() && vision.getTargetID() == 18) {
                     double kp = 1.5;
 
-                    turn = -kp * MaxAngularRate * Math.toRadians(vision.getTargetYaw());
+                    turn = -kp * MaxAngularRate * vision.getYawRad();
                 }
                 return drive
                     .withVelocityX(forward)
