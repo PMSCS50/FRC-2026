@@ -66,11 +66,8 @@ public class VisionSubsystem extends SubsystemBase {
         hasTarget = true;
         targetId = target.getFiducialId();
 
-        // Camera → Tag
-        Transform3d cameraToTag = target.getBestCameraToTarget();
-
         // Robot → Tag
-        Transform3d robotToTag = ROBOT_TO_CAMERA.plus(cameraToTag);
+        Transform3d robotToTag = getRobotToTarget();
 
         // Tag → Robot (MATCHES LIMELIGHT TARGET SPACE)
         tagToRobot = robotToTag.inverse();
@@ -158,6 +155,9 @@ public class VisionSubsystem extends SubsystemBase {
 
         for (var result : camera.getAllUnreadResults()) {
             visionEst = photonPoseEstimator.estimateCoprocMultiTagPose(result);
+            if (vision.isEmpty()) {
+                visionEst = photonPoseEstimator.estimateLowestAmbiguityPose(result);
+            }
             updateEstimationStdDevs(visionEst, result.getTargets());
         }
         
