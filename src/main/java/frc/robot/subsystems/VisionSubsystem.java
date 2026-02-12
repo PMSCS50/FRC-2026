@@ -4,14 +4,32 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.EstimatedRobotPose;
+
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+//I cant see errors, so if any of these imports are unused, delete them
 
 public class VisionSubsystem extends SubsystemBase {
 
     private final PhotonCamera camera;
+
+    public final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+    private final PhotonPoseEstimator photonPoseEstimator;
+    //private PoseStrategy poseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
     // Robot → Camera
     private static final Transform3d ROBOT_TO_CAMERA =
@@ -28,6 +46,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     public VisionSubsystem(String cameraName) {
         camera = new PhotonCamera(cameraName);
+        this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout, ROBOT_TO_CAMERA);
     }
 
     @Override
@@ -72,9 +91,58 @@ public class VisionSubsystem extends SubsystemBase {
 
 
     // Robot yaw relative to TAG (radians)
-    public double getYawRad() {
+    public double getYaw() {
         return tagToRobot != null
             ? tagToRobot.getRotation().getZ()
             : 0.0;
     }
+
+    //Ambiguity of Photon poseEstimation
+    private void updateEstimationStdDevs(Optional<EstimatedRobotPose> estimatedPose,
+    List<PhotonTrackedTarget> targets) {
+
+        // If we don't have a pose estimate, fall back to default noise
+        if (estimatedPose.isEmpty()) {
+            visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));
+            return;
+        }
+
+        int numTags = targets.size();
+
+        // Average distance from camera to visible AprilTags
+        double avgDist = 0.0;
+        for (PhotonTrackedTarget target : targets) {
+            avgDist += target.getBestCameraToTarget().getTranslation().getNorm();
+        }
+        avgDist /= numTags;
+
+        if (numTags >= 2) {
+            visionStdDevs = VecBuilder.fill(
+                    0.5 * avgDist,
+                    0.5 * avgDist,
+                    Math.toRadians(5));
+        } else {
+            visionStdDevs = VecBuilder.fill(
+                    1.0 * avgDist,
+                    1.0 * avgDist,
+                    Math.toRadians(10));
+        }
+    }
+
+    public Matrix<N3, N1> getEstimationStdDevs() {
+        return visionStdDevs;
+    }
+
+    //photonPoseEstimation.
+    public Optional<EstimatedRobotPose> estimateMultiTagPose() {
+
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+
+        for (var result : camera.getAllUnreadResults()) {
+            visionEst = photonPoseEstimator.estimateCoprocMultiTagPose(result);
+            updateEstimationStdDevs(visionEst, result.getTargets());
+        }
+        
+        return visionEst;
+    }  
 }
