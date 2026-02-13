@@ -43,4 +43,19 @@ public class UpdateFieldToRobot extends Command {
         );
 
     }
+
+    @Override
+    public void end(boolean interrupted) {
+
+    }
+
+    @Override
+    public boolean isFinished() {
+        
+    }
+
+    @Override
+    public boolean runsWhenDisabled() {
+        return false;
+    }
 }
