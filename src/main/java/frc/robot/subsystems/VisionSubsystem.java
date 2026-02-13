@@ -27,7 +27,7 @@ public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera camera;
     private PhotonTrackedTarget target;
 
-    public final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
     private final PhotonPoseEstimator photonPoseEstimator;
     //private PoseStrategy poseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
@@ -86,6 +86,10 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public Transform3d getRobotToTarget() {
+        if (!hasTarget) {
+            return null;
+        }
+
         Transform3d cameraToTag = target.getBestCameraToTarget();
         if (cameraToTag == null) {
             return null;
@@ -103,13 +107,14 @@ public class VisionSubsystem extends SubsystemBase {
         return tagToRobot != null ? tagToRobot.getY() : 0.0;
     }
 
-
     // Robot yaw relative to TAG (radians)
     public double getYawRad() {
         return tagToRobot != null ? tagToRobot.getRotation().getZ() : 0.0;
     }
 
-    //EVERYTHING BELOW THIS LINE ARE SUPPLEMENTARY METHODS FOR UpdateFieldToRobot.java
+    //--------------------------
+    //UpdateFieldToRobot helpers
+    //--------------------------
 
     private Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));
 
@@ -149,7 +154,7 @@ public class VisionSubsystem extends SubsystemBase {
         return visionStdDevs;
     }
 
-    //photonPoseEstimation.
+    //gets fieldToRobot
     public Optional<EstimatedRobotPose> estimateMultiTagPose() {
 
         Optional<EstimatedRobotPose> visionEst = Optional.empty();

@@ -40,10 +40,10 @@ public class UpdateFieldToRobot extends Command {
             erp -> {
                 Matrix<N3, N1> visionStdDevs = vision.getEstimationStdDevs();
 
-                SmartDashboard.putNumber("Estimated FieldToRobot", fieldToRobot)
-                SmartDashboard.putNumber("VisionStdDevX", xStd);
-                SmartDashboard.putNumber("VisionStdDevY", yStd);
-                SmartDashboard.putNumber("VisionStdDevTheta", thetaStd);
+                //SmartDashboard.putNumber("Estimated FieldToRobot", fieldToRobot)
+                //SmartDashboard.putNumber("VisionStdDevX", xStd);
+                //SmartDashboard.putNumber("VisionStdDevY", yStd);
+                //SmartDashboard.putNumber("VisionStdDevTheta", thetaStd);
 
                 drivetrain.addVisionMeasurement(erp.estimatedPose.toPose2d(), erp.timestampSeconds, visionStdDevs);
             }
