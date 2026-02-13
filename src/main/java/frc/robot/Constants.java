@@ -78,7 +78,6 @@ public final class Constants {
       }
 
       public static final double BUCKET_AIM_TOLERANCE_DEG = 0.1;
-      public static final double HUB_TAG_ID = 18;
 
       public static final double X_REEF_ALIGNMENT_P = 2;
       public static final double Y_REEF_ALIGNMENT_P = 3;

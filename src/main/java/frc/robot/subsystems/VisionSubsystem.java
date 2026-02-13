@@ -109,10 +109,7 @@ public class VisionSubsystem extends SubsystemBase {
         return tagToRobot != null ? tagToRobot.getRotation().getZ() : 0.0;
     }
 
-    //EVERYTHING BELOW THIS LINE I AM CONSIDERING PUTTING IN A SEPARATE FILE AS A COMMAND
-    //THIS NEW COMMAND SHOULD UPDATD visionStdDevs AND ESTIMATE FIELD RELATIVE POSITION USING PHOTONPOSEESTIMATOR.
-    //THERE, IT WILL ADD VISION REQUIREMENT AS THE FIELS RELATIVE POSITION.
-    //WE CAN EITHER HAVE THIS COMMAND RUN PERIODICALLY IN robotPeriodic() OR RUN UPON THE PRESS OF A BUTTON.
+    //EVERYTHING BELOW THIS LINE ARE SUPPLEMENTARY METHODS FOR UpdateFieldToRobot.java
 
     private Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));
 
@@ -166,5 +163,5 @@ public class VisionSubsystem extends SubsystemBase {
         }
         
         return visionEst;
-    }  
+    }
 }

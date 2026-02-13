@@ -86,6 +86,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("alignToReef", new PV_Align(drivetrain, vision));
         NamedCommands.registerCommand("faceAprilTag", new FaceAprilTagRelative(drivetrain, vision, xInput, yInput));
 
+        //Constantly updates field to robot
+        vision.setDefaultCommand(new UpdateFieldToRobot(drivetrain, vision));
+
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
@@ -99,7 +102,7 @@ public class RobotContainer {
         joystick.x().onTrue(new PV_Align(drivetrain, vision));
         
         
-
+        /*
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() -> 
                 drive
@@ -112,7 +115,7 @@ public class RobotContainer {
             SmartDashboard.putNumber("x", vision.getX());
             SmartDashboard.putNumber("y", vision.getY());
             SmartDashboard.putNumber("rot", vision.getRot());
-
+        */
 
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() -> {
