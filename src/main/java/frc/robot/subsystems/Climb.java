@@ -80,15 +80,15 @@ public class Climb extends SubsystemBase {
         climbMotor.set(-ClimbConstants.climbSpeed);
     }
     
-    public void getHookLimit() {
+    public boolean getHookLimit() {
         return limitSwitchHook.get();
     }
 
-    public void getBottomLimit() {
+    public boolean getBottomLimit() {
         return limitSwitchBottom.get();
     }
 
-    public void getTopLimit() {
+    public boolean getTopLimit() {
         return limitSwitchTop.get();
     }
     
