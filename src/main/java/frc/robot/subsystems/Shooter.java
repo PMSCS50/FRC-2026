@@ -72,8 +72,11 @@ public class Shooter extends SubsystemBase {
         this.setVelocity(velocityFromDistance(x));
     }
     
+    public void startShooting() {
+        shooterMotor.getClosedLoopController().setReference(convertToRPM(velocity),ControlType.kVelocity);
+    }
 
-    public void setShootingVelocity(double newVelocity) {
+    public void startShootingAtVelocity(double newVelocity) {
         velocity = newVelocity;
         shooterMotor.getClosedLoopController().setReference(convertToRPM(velocity),ControlType.kVelocity);
     }
