@@ -81,7 +81,7 @@ public class AimToBucket extends Command {
                 drivetrain.setControl(drive.withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
-                    shooter.setVelocityFromDistance(distance);
+                    shooter.setVelocityTo(shooter.velocityFromDistance(distance));
                 } else {
                     shooter.stop();
                 }

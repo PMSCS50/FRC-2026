@@ -4,7 +4,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkClosedLoopController;
 import frc.robot.Constants.ShooterConstants;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -38,7 +37,6 @@ public class Shooter extends SubsystemBase {
 
     final TalonFX shooterMotor = new TalonFX(ShooterConstants.shooterMotorCanId);
     final SparkMax kickerMotor = new SparkMax(ShooterConstants.kickerMotorCanId, MotorType.kBrushless);
-    private SparkClosedLoopController pidController = kickerMotor.getClosedLoopController();
 
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
@@ -79,7 +77,7 @@ public class Shooter extends SubsystemBase {
     }    
     
     //Calculates velocity for trajectory to get in shooter given distance. Y value is fixed); 
-    private double velocityFromDistance(double x) {
+    public double velocityFromDistance(double x) {
         double y = 1.8288 - shooterHeight; // y distance from shooter to hub. May have to change later
         double phi = Math.toRadians(shooterAngle);
         double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x*Math.tan(phi) + shooterHeight - y)));       
@@ -94,11 +92,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void startKickerMotor() {
-        kickerMotor.getClosedLoopController()
-                    .setSetpoint(
-                        shooterConetants.kickerMotorVelocity,
-                        ControlType.kVelocity
-                    );
+        kickerMotor.set(kickerMotorPower);
     }
 
     
@@ -106,9 +100,7 @@ public class Shooter extends SubsystemBase {
 
         double wheelRadius = 0.0508;
         double kp = 1.1; //extra constant to try and account for energy loss
-        
         double wheelRPM = kp * (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
-
         return wheelRPM;
 
     }

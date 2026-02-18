@@ -40,9 +40,6 @@ public class UpdateFieldToRobot extends Command {
         fieldToRobot.ifPresent(
             erp -> {
                 Matrix<N3, N1> visionStdDevs = vision.getEstimationStdDevs();
-
-                //this method is defined in line 162 of CommandSwerveDriveTrain.java
-                //Once updated, we can get the fieldToRobot pose from driveTrain.getPose()
                 drivetrain.addVisionMeasurement(erp.estimatedPose.toPose2d(), erp.timestampSeconds, visionStdDevs);
             }
         );

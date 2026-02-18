@@ -57,7 +57,7 @@ public final class Constants {
         public static final int shooterMotorCanId = 0;
         public static final int kickerMotorCanId = 0;
 
-        public static final double kickerMotorVelocity = 0;
+        public static final double kickerMotorPower = 0.59; //placeholder value
         public static final int coralRoller2CanId = 22;
     
         public static final double chuteSpeed = .7;
