@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import frc.robot.Constants.ShooterConstants;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -37,12 +38,13 @@ public class Shooter extends SubsystemBase {
 
     final TalonFX shooterMotor = new TalonFX(ShooterConstants.shooterMotorCanId);
     final SparkMax kickerMotor = new SparkMax(ShooterConstants.kickerMotorCanId, MotorType.kBrushless);
-    
+    private SparkClosedLoopController pidController = kickerMotor.getClosedLoopController();
+
+
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
 
 
-    // Current commanded output (interpreted as percent output by SparkMax.set)
     private double velocity = 0.0;
     private double shooterAngle = 70.0; //shooter angle
     private double shooterHeight = 0.508; //How high the shooter is from the ground (meters)
@@ -58,7 +60,7 @@ public class Shooter extends SubsystemBase {
             .idleMode(IdleMode.kCoast)
             .smartCurrentLimit(20);
 
-        kickerMotor.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        kickerMotor.configure(kickerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     private void configureShooterMotor() {
@@ -91,8 +93,15 @@ public class Shooter extends SubsystemBase {
         shooterMotor.setControl(velocityRequest.withVelocity(convertToRPM(rpm / 60.0)));
     }
 
+    public void startKickerMotor() {
+        kickerMotor.getClosedLoopController()
+                    .setSetpoint(
+                        shooterConetants.kickerMotorVelocity,
+                        ControlType.kVelocity
+                    );
+    }
+
     
-    //We need to finish this
     private double convertToRPM(double velocity) {
 
         double wheelRadius = 0.0508;
