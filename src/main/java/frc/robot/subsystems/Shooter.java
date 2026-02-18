@@ -14,11 +14,11 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.math.MathUtil;
+
 
 import java.lang.Math;
 
@@ -66,7 +66,7 @@ public class Shooter extends SubsystemBase {
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        shooterMotorconfig.Slot0.kP = 8.3; // Just a guess, do later
+        shooterMotorconfig.Slot0.kP = 1.3; // Just a guess, do later
         shooterMotorconfig.Slot0.kI = 0;
         shooterMotorconfig.Slot0.kD = 0;
     }
