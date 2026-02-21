@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -16,7 +17,8 @@ public class Intake extends SubsystemBase {
     private final SparkMaxConfig viagraMotorConfig = new SparkMaxConfig();
     private final SparkMax viagraMotor = new SparkMax(IntakeConstants.viagraMotorCanID, MotorType.kBrushless);
     private final RelativeEncoder viagraEncoder = viagraMotor.getEncoder();
-   
+    private final SparkPIDController viagraPIDController = viagraMotor.getPIDController();
+
     private final SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax intakeMotor = new SparkMax(IntakeConstants.intakeMotorCanID, MotorType.kBrushless);
 
@@ -42,6 +44,13 @@ public class Intake extends SubsystemBase {
             .smartCurrentLimit(40);
 
         beltMotor.configure(climbMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        double kP = 1e-6;
+        double kI = 0;
+        double kD = 0;
+        viagraMotorPIDController.setP(kP);
+        viagraMotorPIDController.setI(kI);
+        viagraMotorPIDController.setD(kD);
     }
 
     @Override
@@ -50,7 +59,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void initIntake() {
-        //replace 1/3 with (angle motor turns from start to bumper / 360)
+        //replace 1/4 with (angle motor turns from start to bumper / 360)
         viagraEncoder.setPosition(1/4);
     }
 
