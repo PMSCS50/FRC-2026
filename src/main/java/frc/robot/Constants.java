@@ -47,6 +47,12 @@ public final class Constants {
         public static final double l2_5 = 14.85;
       }
 
+      public static final class IntakeConstants {
+        public static final int viagraMotorCanId = 0;
+        public static final int intakeMotorCanId = 0;
+        public static final int beltMotorCanId = 0;
+      }
+
       public static final class ClimbConstants {
         public static final int climbMotorCanId = 0;
         public static final double climbSpeed = 0;

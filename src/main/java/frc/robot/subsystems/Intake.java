@@ -18,10 +18,10 @@ public class Intake extends SubsystemBase {
     private final RelativeEncoder viagraEncoder = viagraMotor.getEncoder();
    
     private final SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
-    private final SparkMax intakeMotor = new SparkMax(IntakeConstants.viagraMotorCanID, MotorType.kBrushless);
+    private final SparkMax intakeMotor = new SparkMax(IntakeConstants.intakeMotorCanID, MotorType.kBrushless);
 
     private final SparkMaxConfig beltMotorConfig = new SparkMaxConfig();
-    private final SparkMax beltMotor = new SparkMax(IntakeConstants.viagraMotorCanID, MotorType.kBrushless);
+    private final SparkMax beltMotor = new SparkMax(IntakeConstants.beltMotorCanID, MotorType.kBrushless);
     
     public Intake() {
         viagraMotorConfig
@@ -51,8 +51,7 @@ public class Intake extends SubsystemBase {
 
     public void initIntake() {
         //replace 1/3 with (angle motor turns from start to bumper / 360)
-        viagraEncoder.setPosition(1/3);
-        
+        viagraEncoder.setPosition(1/4);
     }
 
 
