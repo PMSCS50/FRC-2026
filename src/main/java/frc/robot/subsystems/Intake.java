@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
 
         double viagraPower = 0.2     
         double ampThreshold = 30;  
-        double timeoutSeconds = 2.0;   // safety timeout
+        double timeoutSeconds = 2.0;
 
         double current = viagraMotor.getOutputCurrent();
 
@@ -69,7 +69,7 @@ public class Intake extends SubsystemBase {
         }
 
         if (current < ampThreshold) {
-            intakePivotMotor.set(deployPower);
+            intakePivotMotor.set(viagraPower);
         }
 
         else {
