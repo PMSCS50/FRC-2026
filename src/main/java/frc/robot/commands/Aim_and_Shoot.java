@@ -74,7 +74,7 @@ public class AimToBucket extends Command {
                 
                 double distance = Math.hypot(dx,dy); 
 
-                double yaw = target.getYawRad(); //2. get yaw for robot to turn
+                double yaw = Math.atan2(dy,dx) //2. get yaw for robot to turn (target.getYawRad() aims to apriltag, not hub.)
             
                 // 3. Control Loop
                 double rotSpeed = rotController.calculate(yaw);

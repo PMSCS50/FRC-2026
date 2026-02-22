@@ -17,13 +17,16 @@ public class Intake extends SubsystemBase {
     private final SparkMaxConfig viagraMotorConfig = new SparkMaxConfig();
     private final SparkMax viagraMotor = new SparkMax(IntakeConstants.viagraMotorCanID, MotorType.kBrushless);
     private final RelativeEncoder viagraEncoder = viagraMotor.getEncoder();
-    private final SparkPIDController viagraPIDController = viagraMotor.getPIDController();
 
     private final SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax intakeMotor = new SparkMax(IntakeConstants.intakeMotorCanID, MotorType.kBrushless);
 
     private final SparkMaxConfig beltMotorConfig = new SparkMaxConfig();
     private final SparkMax beltMotor = new SparkMax(IntakeConstants.beltMotorCanID, MotorType.kBrushless);
+
+    //for starting the intake
+    private final Timer initTimer = new Timer();
+    private boolean initializing = false;
     
     public Intake() {
         viagraMotorConfig
@@ -31,26 +34,20 @@ public class Intake extends SubsystemBase {
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
-        viagraMotor.configure(climbMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        viagraMotor.configure(viagraMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         intakeMotorConfig
             .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
-        intakeMotor.configure(climbMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeMotor.configure(intakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         beltMotorConfig
             .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
-        beltMotor.configure(climbMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
-        double kP = 1e-6;
-        double kI = 0;
-        double kD = 0;
-        viagraMotorPIDController.setP(kP);
-        viagraMotorPIDController.setI(kI);
-        viagraMotorPIDController.setD(kD);
+        beltMotor.configure(beltMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+ 
     }
 
     @Override
@@ -58,14 +55,42 @@ public class Intake extends SubsystemBase {
 
     }
 
-    public void initIntake() {
-        //replace 1/4 with (angle motor turns from start to bumper / 360)
-        viagraEncoder.setPosition(1/4);
+    public void initinitIntake() {
+        initTimer.restart();
+        initializing = true;
     }
 
+    //This works because when the intake hits the bumper, the stall uses a huge amount of current.
+    //So, we can just check if the current usage exceeds 30 amps and then stop the motor.
+    public void initIntake() {
+        if (!initializing) return;
 
+        double viagraPower = 0.2     
+        double ampThreshold = 30;  
+        double timeoutSeconds = 2.0;   // safety timeout
+
+        double current = viagraMotor.getOutputCurrent();
+
+        if (initTimer.hasElapsed(timeoutSeconds)) {
+            viagraMotor.set(0);
+            initializing = false;
+            return;
+        }
+
+        if (current < ampThreshold) {
+            intakePivotMotor.set(deployPower);
+        }
+
+        else {
+            intakePivotMotor.set(0);
+            viagraEncoder.setPosition(0);
+            initializing = false;
+        }
+    }
+
+    //all power values are placeholders
     public void intakeIntake() {
-        intakeMotor.set(0.4);
+        intakeMotor.set(0.4); 
     }
 
     public void agitateAgitators() {
