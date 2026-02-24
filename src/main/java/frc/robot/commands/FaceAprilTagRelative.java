@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.util.function.DoubleSupplier;
@@ -61,9 +62,8 @@ public class FaceAprilTagRelative extends Command {
 
         PhotonPipelineResult result = vision.getLatestResult();
         if (result.hasTargets()) {
-            PhotonTrackedTarget target = result.getBestTarget();
-            // target.getYaw() is in degrees (PhotonVision). Convert to radians.
-            double yawRad = Math.toRadians(target.getYaw());
+
+            double yawRad = vision.getYawRad();
             
             omegaShenron = yawRad * kPRotate; 
             
