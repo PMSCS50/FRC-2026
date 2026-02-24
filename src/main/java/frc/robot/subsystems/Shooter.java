@@ -76,14 +76,14 @@ public class Shooter extends SubsystemBase {
 
     }    
     
-        //Calculates velocity for trajectory to get in shooter given distance; 
-        public double velocityFromDistance(double x) {
-            double y = 1.8288 - shooterHeight;
-            double phi = Math.toRadians(shooterAngle);
-            double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) + shooterHeight - y)));       
-            double kp = v / 8;
-            return kp * v; //im scared that this wont work but theres no way of knowing without trying
-        }
+    //Calculates velocity for trajectory to get in shooter given distance; 
+    public double velocityFromDistance(double x) {
+        double y = 1.8288 - shooterHeight;
+        double phi = Math.toRadians(shooterAngle);
+        double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) + shooterHeight - y)));       
+        double kp = v / 8;
+        return kp * v; //im scared that this wont work but theres no way of knowing without trying
+    }
 
 
     public void setVelocityTo(double newVelocity) {
