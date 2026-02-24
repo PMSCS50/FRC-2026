@@ -52,18 +52,15 @@ public class RobotContainer {
     
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
-    //private PhotonCamera cam1 = new PhotonCamera("camera1_2585"); we dont need this
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     private final CommandXboxController subjoystick = new CommandXboxController(1);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final Elevator elevator = new Elevator();
-    private final AlgaeRollers algaeroller = new AlgaeRollers();
-    private final CoralRollers coralroller = new CoralRollers();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Climb climb = new Climb();
     private final VisionSubsystem vision = new VisionSubsystem("Solid-State-Scouter");
+    private final Shooter shooter = new Shooter();
 
     /* Path follower */
     private SendableChooser<Command> autoChooser;
@@ -71,28 +68,16 @@ public class RobotContainer {
     public RobotContainer() {
         CameraServer.startAutomaticCapture();
         // register commands to pathplanner
-        
-        /*
-        NamedCommands.registerCommand("elevatorL2", new ElevatorPIDAutoL2(elevator, ElevatorConstants.l2));
-        NamedCommands.registerCommand("elevatorL4Actual", new ElevatorPIDAuto(elevator, ElevatorConstants.l4));
-        NamedCommands.registerCommand("elevatorL1", new ElevatorPIDAutoL1(elevator, ElevatorConstants.l1-0.5));
-        NamedCommands.registerCommand("AlignReef", new AlignToReefTagRelative(drivetrain, true));
-        NamedCommands.registerCommand("scoreOut", new CoralAutoScore(coralroller));
-        NamedCommands.registerCommand("scoreOutFast", new CoralAutoScoreFast(coralroller));
-        NamedCommands.registerCommand("preRoller", new CoralAutoPreroller(coralroller));
-        NamedCommands.registerCommand("stopCoralRollers", new CoralAutoStop(coralroller));
-        */
-
-        //the targetID was missing in PV_Align constructer so I just put something there.
-        //If you need a specific targetID let me know 
         NamedCommands.registerCommand("alignToTag", new PV_Align(drivetrain, vision, vision.getBestTarget()));
-        NamedCommands.registerCommand("faceAprilTag", new FaceAprilTagRelative(drivetrain, vision, xInput, yInput));
+        NamedCommands.registerCommand("climbAscend", new ClimbPull(climb));
+        NamedCommands.registerCommand("climbDescend", new ClimbPush(climb));
+        NamedCommands.registerCommsnd("activeShooter", new AimAndShoot(drivetrain, vision, shooter));
 
-        //Constantly updates field to robot
         vision.setDefaultCommand(new UpdateFieldToRobot(drivetrain, vision));
 
+        PathPlannerAuto pathPlanner = new PathPlannerAuto("Ioseb_Vissarionovich_Dzhugashvili");
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        SmartDashboard.putData("Auto Mode", autoChooser);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureBindings();
     }
