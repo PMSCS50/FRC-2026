@@ -12,11 +12,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class Intake extends SubsystemBase {
-    //I am calling it the viagra motor because it turns the intake on
+    //I am calling it the pivot motor because it turns the intake on
     //We will need this to be a tradition
-    private final SparkMaxConfig viagraMotorConfig = new SparkMaxConfig();
-    private final SparkMax viagraMotor = new SparkMax(IntakeConstants.viagraMotorCanID, MotorType.kBrushless);
-    private final RelativeEncoder viagraEncoder = viagraMotor.getEncoder();
+    private final SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
+    private final SparkMax pivotMotor = new SparkMax(IntakeConstants.pivotMotorCanID, MotorType.kBrushless);
+    private final RelativeEncoder pivotEncoder = pivotMotor.getEncoder();
 
     private final SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
     private final SparkMax intakeMotor = new SparkMax(IntakeConstants.intakeMotorCanID, MotorType.kBrushless);
@@ -26,11 +26,11 @@ public class Intake extends SubsystemBase {
     private boolean initializing = false;
     
     public Intake() {
-        viagraMotorConfig
+        pivotMotorConfig
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
-        viagraMotor.configure(viagraMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         intakeMotorConfig
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
@@ -57,19 +57,19 @@ public class Intake extends SubsystemBase {
         double ampThreshold = 30;  
         double timeoutSeconds = 2.0;
 
-        double current = viagraMotor.getOutputCurrent();
+        double current = pivotMotor.getOutputCurrent();
 
         if (initTimer.hasElapsed(timeoutSeconds)) {
-            viagraMotor.set(0);
+            pivotMotor.set(0);
             initializing = false;
             return;
         }
 
         if (current < ampThreshold) {
-            viagraMotor.set(IntakeConstants.viagraPower);
+            pivotMotor.set(IntakeConstants.pivotPower);
         } else {
-            viagraMotor.set(0);
-            viagraEncoder.setPosition(0);
+            pivotMotor.set(0);
+            pivotEncoder.setPosition(0);
             initializing = false;
         }
     }

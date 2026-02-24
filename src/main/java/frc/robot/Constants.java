@@ -48,9 +48,9 @@ public final class Constants {
       }
 
       public static final class IntakeConstants {
-        public static final int viagraMotorCanId = 1;
+        public static final int pivotMotorCanId = 1;
         public static final int intakeMotorCanId = 2;
-        public static final double viagraPower = 0.1;
+        public static final double pivotPower = 0.1;
         public static final double intakePower = 0.4;
       }
 
