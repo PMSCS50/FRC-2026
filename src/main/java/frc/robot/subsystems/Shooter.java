@@ -32,8 +32,8 @@ Finish convertToRPM();
 
 public class Shooter extends SubsystemBase {
     // Configuration for the shooter motor
-    private final TalonFXConfiguration shooterMotorConfig1 = new TalonFXConfiguration();
-    private final TalonFXConfiguration shooterMotorConfig2 = new TalonFXConfiguration();
+    private final TalonFXConfiguration shooterMotor1Config = new TalonFXConfiguration();
+    private final TalonFXConfiguration shooterMotor2Config = new TalonFXConfiguration();
     private final SparkMaxConfig kickerMotorConfig = new SparkMaxConfig();
 
     final TalonFX shooterMotor1 = new TalonFX(ShooterConstants.shooterMotor1CanId);
@@ -51,8 +51,8 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         //TalonFX shooterMotorConfig
-        configureShooterMotor(shooterMotorConfig1);
-        configureShooterMotor(shooterMotorConfig2);
+        configureShooterMotor(shooterMotor1Config);
+        configureShooterMotor(shooterMotor2Config);
 
         shooterMotor1.getConfigurator().apply(shooterMotor1Config);
         shooterMotor2.getConfigurator().apply(shooterMotor2Config);
@@ -70,7 +70,7 @@ public class Shooter extends SubsystemBase {
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        shooterMotorConfig.Slot0.kP = 0.1; // Just a guess, do later
+        shooterMotorConfig.Slot0.kP = 0.1;
         shooterMotorConfig.Slot0.kI = 0;
         shooterMotorConfig.Slot0.kD = 0;
     }
@@ -85,8 +85,8 @@ public class Shooter extends SubsystemBase {
         double y = 1.8288 - shooterHeight;
         double phi = Math.toRadians(shooterAngle);
         double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) + shooterHeight - y)));       
-        double kp = v / 8;
-        return kp * v; //im scared that this wont work but theres no way of knowing without trying
+        double dragFactor = (1 + 0.015*x) * 1.04;
+        return dragFactor * v;
     }
 
 
