@@ -35,19 +35,19 @@ public class Climb extends SubsystemBase {
 
     public Climb() {
         climbMotor1Config
-            .inverted(true)
+            //.inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
         climbMotor1.configure(climbMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         climbMotor2Config
-            .inverted(true)
+            //.inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
         climbMotor2.configure(climbMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        climbMotor2.setControl(new Follower(climbMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+        climbMotor2.follow(climbMotor1,true);
     }
 
     @Override
@@ -64,7 +64,6 @@ public class Climb extends SubsystemBase {
         if (limitSwitchHook.get()) {
             if (!limitSwitchTop.get()) {
                 climbMotor1.set(0);
-                climbMotor1.set(0);
             } else {       
                 climbMotor1.set(ClimbConstants.climbSpeed);
             }
@@ -74,7 +73,6 @@ public class Climb extends SubsystemBase {
     public void push() {
         if (limitSwitchBottom.get()) {
             climbMotor1.set(0);
-            climbMotor2.set(0);
         } else {
             climbMotor1.set(-ClimbConstants.climbSpeed);
         }
