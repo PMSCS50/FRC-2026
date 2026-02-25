@@ -42,6 +42,8 @@ public class AimAndShoot extends Command {
                 Constants.BUCKET_AIM_P, 0, 0
         );
 
+        rotController.enableContinuousInput(-Math.PI, Math.PI);
+
         addRequirements(drivetrain, shooter);
     }
 
@@ -58,10 +60,9 @@ public class AimAndShoot extends Command {
     @Override
     public void execute() {
         if (vision.hasTargets()) {
-            dontSeeTargetTimer.reset();
             PhotonPipelineResult result = vision.getLatestResult();
             var targetOptional = result.getTargets().stream()
-                            .filter(t -> t.getFiducialId() == Constants.HUB_TAG_ID)
+                            .filter(t -> t.getFiducialId() == 18)
                             .findFirst();
 
             if (targetOptional.isPresent()) {
@@ -77,24 +78,27 @@ public class AimAndShoot extends Command {
                 
                 double distance = Math.hypot(dx,dy); 
 
-                double yaw = Math.atan2(dy,dx) //2. get yaw for robot to turn (target.getYawRad() aims to apriltag, not hub.)
+                double yaw = Math.atan2(dy,dx); //2. get yaw for robot to turn (target.getYawRad() aims to apriltag, not hub.)
             
                 // 3. Control Loop
                 double rotSpeed = rotController.calculate(yaw);
                 drivetrain.setControl(drive.withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
+                    if (!onTargetTimer.isRunning()) {
+                        onTargetTimer.restart();
+                    }
                     shooter.setVelocityTo(shooter.velocityFromDistance(distance));
                 } else {
                     shooter.stop();
                 }
                 return; // Exit early since we found our target
+            } else {
+                drivetrain.setControl(
+                    drive.withRotationalRate(0)
+                ); 
+                shooter.stop();
             }
-        } else {
-            drivetrain.setControl(
-                drive.withRotationalRate(0)
-            ); 
-            shooter.stop();
         }
 
     }
