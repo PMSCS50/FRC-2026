@@ -22,6 +22,8 @@ public class AimAndShoot extends Command {
     private final Shooter shooter;
 
     private final PIDController rotController;
+    private final DoubleSupplier xInput;
+    private final DoubleSupplier yInput;
 
     private final Timer dontSeeTargetTimer = new Timer();
     private final Timer onTargetTimer = new Timer();
@@ -32,7 +34,9 @@ public class AimAndShoot extends Command {
     public AimAndShoot(
             CommandSwerveDrivetrain drivetrain,
             VisionSubsystem vision,
-            Shooter shooter
+            Shooter shooter,
+            DoubleSupplier xInput,
+            DoubleSupplier yInput
     ) {
         this.drivetrain = drivetrain;
         this.vision = vision;
@@ -59,6 +63,8 @@ public class AimAndShoot extends Command {
 
     @Override
     public void execute() {
+        double vx = xInput.getAsDouble();
+        double vy = yInput.getAsDouble();
         if (vision.hasTargets()) {
             PhotonPipelineResult result = vision.getLatestResult();
             var targetOptional = result.getTargets().stream()
@@ -82,7 +88,10 @@ public class AimAndShoot extends Command {
             
                 // 3. Control Loop
                 double rotSpeed = rotController.calculate(yaw);
-                drivetrain.setControl(drive.withRotationalRate(rotSpeed));
+                drivetrain.setControl(
+                    drive.withVelocityX(vx)
+                    .withVelocityY(vy)
+                    .withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
                     //if (!onTargetTimer.isRunning()) {
@@ -95,7 +104,9 @@ public class AimAndShoot extends Command {
                 return; // Exit early since we found our target
             } else {
                 drivetrain.setControl(
-                    drive.withRotationalRate(0)
+                    drive.withVelocityX(vx)
+                    .withVelocityY(vy)
+                    .withRotationalRate(0)
                 ); 
                 shooter.stop();
             }
