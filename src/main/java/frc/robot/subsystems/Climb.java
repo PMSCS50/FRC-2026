@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.DigitalInput;
-//import edu.wpi.first.wpilibj.DigitalOutput;
+import com.ctre.phoenix6.signals.MotorAlignmentValue; // Added this
+import com.ctre.phoenix6.controls.Follower;
 
 public class Climb extends SubsystemBase {
     //1 = left (facing forwards), 2 = right (facing forwards)
@@ -46,6 +47,7 @@ public class Climb extends SubsystemBase {
             .smartCurrentLimit(40);
 
         climbMotor2.configure(climbMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        climbMotor2.setControl(new Follower(climbMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
     @Override
@@ -65,7 +67,6 @@ public class Climb extends SubsystemBase {
                 climbMotor1.set(0);
             } else {       
                 climbMotor1.set(ClimbConstants.climbSpeed);
-                climbMotor2.set(ClimbConstants.climbSpeed);
             }
         }
     }
@@ -76,18 +77,15 @@ public class Climb extends SubsystemBase {
             climbMotor2.set(0);
         } else {
             climbMotor1.set(-ClimbConstants.climbSpeed);
-            climbMotor2.set(-ClimbConstants.climbSpeed);
         }
     }
 
     public void stopClimb() {
         climbMotor1.set(0);
-        climbMotor2.set(0);
     }
 
     public void reset(){
         climbMotor1.set(-ClimbConstants.climbSpeed);
-        climbMotor2.set(-ClimbConstants.climbSpeed);
     }
     
     public boolean getHookLimit() {

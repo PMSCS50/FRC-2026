@@ -12,6 +12,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.signals.MotorAlignmentValue; // Added this
+import com.ctre.phoenix6.controls.Follower;
 
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,6 +37,7 @@ public class Shooter extends SubsystemBase {
     // Configuration for the shooter motor
     private final TalonFXConfiguration shooterMotor1Config = new TalonFXConfiguration();
     private final TalonFXConfiguration shooterMotor2Config = new TalonFXConfiguration();
+    private DutyCycleOut motorControl = new DutyCycleOut(0.0);
     private final SparkMaxConfig kickerMotor1Config = new SparkMaxConfig();
     private final SparkMaxConfig kickerMotor2Config = new SparkMaxConfig();
 
@@ -59,18 +63,17 @@ public class Shooter extends SubsystemBase {
         shooterMotor1.getConfigurator().apply(shooterMotor1Config);
         shooterMotor2.getConfigurator().apply(shooterMotor2Config);
 
+        shooterMotor2.setControl(new Follower(shooterMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
+
         kickerMotor1Config
             // .inverted(true)
             .idleMode(IdleMode.kCoast)
             .smartCurrentLimit(20);
-
-        kickerMotor1.configure(kickerMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
         kickerMotor2Config
             // .inverted(true)
             .idleMode(IdleMode.kCoast)
             .smartCurrentLimit(20);
-
+        kickerMotor1.configure(kickerMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         kickerMotor2.configure(kickerMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
@@ -79,9 +82,15 @@ public class Shooter extends SubsystemBase {
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimit = 20;
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
+        shooterMotorCOnfig.Slot0.kV = 0.1;
         shooterMotorConfig.Slot0.kP = 0.1;
         shooterMotorConfig.Slot0.kI = 0;
         shooterMotorConfig.Slot0.kD = 0;
+
+        shooterMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        shooterMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        shooterMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+        shooterMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     }
 
     @Override
@@ -101,13 +110,14 @@ public class Shooter extends SubsystemBase {
 
     public void setVelocityTo(double newVelocity) {
         velocity = newVelocity;
-        shooterMotor1.setControl(velocityRequest.withVelocity(convertToRPM(velocity / 60.0)));
-        shooterMotor2.setControl(velocityRequest.withVelocity(convertToRPM(velocity / 60.0)));
+        shooterMotor1.setControl(motorControl.withOutput(
+            velocityRequest.withVelocity(convertToRPM(velocity) / 60)
+        ));
     }
 
     public void startKickerMotor() {
         kickerMotor1.set(ShooterConstants.kickerMotorPower);
-        kickerMotor2.set(ShooterConstants.kickerMotorPower);
+        kickerMotor2.set(-ShooterConstants.kickerMotorPower);
     }
 
     
