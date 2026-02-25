@@ -19,9 +19,12 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class Climb extends SubsystemBase {
     //1 = left (facing forwards), 2 = right (facing forwards)
 
-    private final SparkMaxConfig climbMotorConfig = new SparkMaxConfig();
-    private final SparkMax climbMotor = new SparkMax(ClimbConstants.climbMotorCanID, MotorType.kBrushless);
-    private RelativeEncoder climbEncoder = climbMotor.getEncoder(); 
+    private final SparkMaxConfig climbMotor1Config = new SparkMaxConfig();
+    private final SparkMaxConfig climbMotor2Config = new SparkMaxConfig();
+    private final SparkMax climbMotor1 = new SparkMax(ClimbConstants.climbMotor1CanId, MotorType.kBrushless);
+    private final SparkMax climbMotor2 = new SparkMax(ClimbConstants.climbMotor2CanId, MotorType.kBrushless);
+
+    private RelativeEncoder climbEncoder = climbMotor1.getEncoder(); 
 
     private final DigitalInput limitSwitchHook = new DigitalInput(1);
     private final DigitalInput limitSwitchTop = new DigitalInput(2);
@@ -30,12 +33,19 @@ public class Climb extends SubsystemBase {
     private double ClimbStatus;
 
     public Climb() {
-        climbMotorConfig
+        climbMotor1Config
             .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
-        climbMotor.configure(climbMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        climbMotor1.configure(climbMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        climbMotor2Config
+            .inverted(true)
+            .idleMode(IdleMode.kBrake)
+            .smartCurrentLimit(40);
+
+        climbMotor2.configure(climbMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
@@ -51,27 +61,33 @@ public class Climb extends SubsystemBase {
     public void pull(){
         if (limitSwitchHook.get()) {
             if (!limitSwitchTop.get()) {
-                climbMotor.set(0);
+                climbMotor1.set(0);
+                climbMotor1.set(0);
             } else {       
-                climbMotor.set(ClimbConstants.climbSpeed);
+                climbMotor1.set(ClimbConstants.climbSpeed);
+                climbMotor2.set(ClimbConstants.climbSpeed);
             }
         }
     }
     
     public void push() {
         if (limitSwitchBottom.get()) {
-            climbMotor.set(0);
+            climbMotor1.set(0);
+            climbMotor2.set(0);
         } else {
-            climbMotor.set(-ClimbConstants.climbSpeed);
+            climbMotor1.set(-ClimbConstants.climbSpeed);
+            climbMotor2.set(-ClimbConstants.climbSpeed);
         }
     }
 
     public void stopClimb() {
-        climbMotor.set(0);
+        climbMotor1.set(0);
+        climbMotor2.set(0);
     }
 
     public void reset(){
-        climbMotor.set(-ClimbConstants.climbSpeed);
+        climbMotor1.set(-ClimbConstants.climbSpeed);
+        climbMotor2.set(-ClimbConstants.climbSpeed);
     }
     
     public boolean getHookLimit() {

@@ -34,11 +34,13 @@ public class Shooter extends SubsystemBase {
     // Configuration for the shooter motor
     private final TalonFXConfiguration shooterMotor1Config = new TalonFXConfiguration();
     private final TalonFXConfiguration shooterMotor2Config = new TalonFXConfiguration();
-    private final SparkMaxConfig kickerMotorConfig = new SparkMaxConfig();
+    private final SparkMaxConfig kickerMotor1Config = new SparkMaxConfig();
+    private final SparkMaxConfig kickerMotor2Config = new SparkMaxConfig();
 
     final TalonFX shooterMotor1 = new TalonFX(ShooterConstants.shooterMotor1CanId);
     final TalonFX shooterMotor2 = new TalonFX(ShooterConstants.shooterMotor2CanId);
-    final SparkMax kickerMotor = new SparkMax(ShooterConstants.kickerMotorCanId, MotorType.kBrushless);
+    final SparkMax kickerMotor1 = new SparkMax(ShooterConstants.kickerMotor1CanId, MotorType.kBrushless);
+    final SparkMax kickerMotor2 = new SparkMax(ShooterConstants.kickerMotor2CanId, MotorType.kBrushless);
 
 
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
@@ -57,12 +59,19 @@ public class Shooter extends SubsystemBase {
         shooterMotor1.getConfigurator().apply(shooterMotor1Config);
         shooterMotor2.getConfigurator().apply(shooterMotor2Config);
 
-        kickerMotorConfig
+        kickerMotor1Config
             // .inverted(true)
             .idleMode(IdleMode.kCoast)
             .smartCurrentLimit(20);
 
-        kickerMotor.configure(kickerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        kickerMotor1.configure(kickerMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        kickerMotor2Config
+            // .inverted(true)
+            .idleMode(IdleMode.kCoast)
+            .smartCurrentLimit(20);
+
+        kickerMotor2.configure(kickerMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     private void configureShooterMotor(TalonFXConfiguration shooterMotorConfig) {
@@ -97,7 +106,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void startKickerMotor() {
-        kickerMotor.set(ShooterConstants.kickerMotorPower);
+        kickerMotor1.set(ShooterConstants.kickerMotorPower);
+        kickerMotor2.set(ShooterConstants.kickerMotorPower);
     }
 
     

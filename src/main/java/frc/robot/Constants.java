@@ -56,14 +56,16 @@ public final class Constants {
 
       public static final class ClimbConstants {
         public static final int climbMotorCanId = 3;
-        public static final double climbSpeed = 0;
+        public static final int climbMotorCanId = 4;
+        public static final double climbSpeed = 0.78;
         public static final double climbMax = 0;
       }
 
       public static final class ShooterConstants {
-        public static final int shooterMotor1CanId = 4;
-        public static final int shooterMotor2CanId = 5;
-        public static final int kickerMotorCanId = 6;
+        public static final int shooterMotor1CanId = 5;
+        public static final int shooterMotor2CanId = 6;
+        public static final int kickerMotor1CanId = 7;
+        public static final int kickerMotor2CanId = 8;
 
         public static final double kickerMotorPower = 0.59;
         /*
