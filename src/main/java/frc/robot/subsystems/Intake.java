@@ -26,11 +26,13 @@ public class Intake extends SubsystemBase {
     
     public Intake() {
         pivotMotorConfig
+            .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
         pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         intakeMotorConfig
+            .inverted(true)
             .idleMode(IdleMode.kBrake)
             .smartCurrentLimit(40);
 
