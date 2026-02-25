@@ -119,7 +119,6 @@ public class Shooter extends SubsystemBase {
 
     public void startKickerMotor() {
         kickerMotor1.set(ShooterConstants.kickerMotorPower);
-        kickerMotor2.set(-ShooterConstants.kickerMotorPower);
     }
 
     
