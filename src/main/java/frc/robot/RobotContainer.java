@@ -89,7 +89,9 @@ public class RobotContainer {
         joystick.x().onTrue(new PV_Align(drivetrain, vision));
 
         joystick.rightTrigger(0.3).whileTrue(
-            new AimAndShoot(drivetrain,vision,shooter,joystick::getLeftY,joystick::getLeftX)
+            new AimAndShoot(drivetrain,vision,shooter,
+            () -> joystick.getLeftY() * directionFlipper,
+            () -> joystick.getLeftX() * directionFlipper)
         );
 
 

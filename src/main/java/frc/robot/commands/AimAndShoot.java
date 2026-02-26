@@ -64,8 +64,8 @@ public class AimAndShoot extends Command {
 
     @Override
     public void execute() {
-        double vx = xInput.getAsDouble() * MaxSpeed * speedLimiter * directionFlipper;
-        double vy = yInput.getAsDouble() * MaxSpeed * speedLimiter * directionFlipper;
+        double vx = xInput.getAsDouble() * MaxSpeed * speedLimiter;
+        double vy = yInput.getAsDouble() * MaxSpeed * speedLimiter;
         if (vision.hasTargets()) {
             PhotonPipelineResult result = vision.getLatestResult();
             var targetOptional = result.getTargets().stream()
