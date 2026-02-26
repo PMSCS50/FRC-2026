@@ -154,8 +154,8 @@ public class AimAndShoot extends Command {
     @Override
     public void end(boolean interrupted) {
         drivetrain.setControl(
-            drive.withVelocityX(0)
-                .withVelocityY(0)
+            drive.withVelocityX(vx)
+                .withVelocityY(vy)
                 .withRotationalRate(0)
         );
         shooter.stop();
