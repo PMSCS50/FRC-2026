@@ -48,7 +48,7 @@ public class AimAndShoot extends Command {
         this.yInput = yInput;
 
         rotController = new PIDController(
-                Constants.BUCKET_AIM_P, 0, 0
+                1, 0, 0
         );
 
         rotController.enableContinuousInput(-Math.PI, Math.PI);
@@ -59,7 +59,7 @@ public class AimAndShoot extends Command {
 
     @Override
     public void initialize() {        
-        rotController.setTolerance(0.05);
+        rotController.setTolerance(0.03);
     }
 
     @Override
