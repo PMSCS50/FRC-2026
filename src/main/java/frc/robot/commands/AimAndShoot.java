@@ -6,6 +6,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import frc.robot.Constants;
@@ -28,8 +30,8 @@ public class AimAndShoot extends Command {
     private final Timer dontSeeTargetTimer = new Timer();
     private final Timer onTargetTimer = new Timer();
 
-    private final SwerveRequest.RobotCentric drive =
-            new SwerveRequest.RobotCentric();
+    private final SwerveRequest.FieldCentric drive =
+            new SwerveRequest.FieldCentric();
 
     public AimAndShoot(
             CommandSwerveDrivetrain drivetrain,
@@ -41,6 +43,8 @@ public class AimAndShoot extends Command {
         this.drivetrain = drivetrain;
         this.vision = vision;
         this.shooter = shooter;
+        this.xInput = xInput;
+        this.yInput = yInput;
 
         rotController = new PIDController(
                 Constants.BUCKET_AIM_P, 0, 0
@@ -57,8 +61,8 @@ public class AimAndShoot extends Command {
         //dontSeeTargetTimer.restart();
         //onTargetTimer.restart();
 
-        rotController.setSetpoint(0.0); // bucket centered
-        rotController.setTolerance(Constants.BUCKET_AIM_TOLERANCE_DEG);
+        
+        rotController.setTolerance(0.05);
     }
 
     @Override
@@ -74,6 +78,7 @@ public class AimAndShoot extends Command {
             if (targetOptional.isPresent()) {
                 var target = targetOptional.get();
                 //dontSeeTargetTimer.reset();
+
     
                 // 1. Get Distance (Direct 3D vector, ignores height constants)
                 var translation = target.getBestCameraToTarget().getTranslation();
@@ -82,12 +87,42 @@ public class AimAndShoot extends Command {
                 double dx = translation.getX() + aprilTagToHub; //forward distance to hub (RobotToApriltagX + AprilTagToHubX)
                 double dy = translation.getY(); //horizontal distance to the hub
                 
-                double distance = Math.hypot(dx,dy); 
+                double distance = Math.hypot(dx,dy);
+                double phi = Math.toRadians(70);
 
-                double yaw = Math.atan2(dy,dx); //2. get yaw for robot to turn (target.getYawRad() aims to apriltag, not hub.)
-            
+                double unitX = dx / distance;
+                double unitY = dy / distance;
+                double vStationary = shooter.velocityFromDistance(distance);
+
+                double vHorizontal = vStationary * Math.cos(phi);
+
+                double desiredVx = vHorizontal * unitX;
+                double desiredVy = vHorizontal * unitY;
+
+                var speeds = drivetrain.getSpeeds();
+
+                var fieldSpeeds = 
+                    ChassisSpeeds.fromRobotRelativeSpeeds(
+                        speeds,
+                        drivetrain.getState().Pose.getRotation()
+                    );
+
+                double vxField = fieldSpeeds.vxMetersPerSecond;
+                double vyField = fieldSpeeds.vyMetersPerSecond;
+
+                double correctedVx = desiredVx - vxField;
+                double correctedVy = desiredVy - vyField;
+                
+                //2. get yaw for robot to turn (target.getYawRad() aims to apriltag, not hub.)
+                double yaw = Math.atan2(dy,dx);
+                double correctedYaw = Math.atan2(correctedVy,correctedVx); 
+                double correction = MathUtil.angleModulus(correctedYaw - yaw);
+                correction = MathUtil.clamp(correction, -0.2, 0.2); //safety clamp so shit doesnt get too crazy
+                double bestYaw = yaw + correction;
+
                 // 3. Control Loop
-                double rotSpeed = rotController.calculate(yaw);
+                rotController.setSetpoint(bestYaw);
+                double rotSpeed = rotController.calculate(robotYaw);
                 drivetrain.setControl(
                     drive.withVelocityX(vx)
                     .withVelocityY(vy)
@@ -97,7 +132,10 @@ public class AimAndShoot extends Command {
                     //if (!onTargetTimer.isRunning()) {
                     //    onTargetTimer.restart();
                     //}
-                    shooter.setVelocityTo(shooter.velocityFromDistance(distance));
+                    double correctedHorizontal = Math.hypot(correctedVx, correctedVy);
+
+                    double correctedVelocity = correctedHorizontal / Math.cos(phi);
+                    shooter.setVelocityTo(correctedVelocity);
                 } else {
                     shooter.stop();
                 }
