@@ -27,8 +27,9 @@ public class AimAndShoot extends Command {
     private final DoubleSupplier xInput;
     private final DoubleSupplier yInput;
 
-    private final Timer dontSeeTargetTimer = new Timer();
-    private final Timer onTargetTimer = new Timer();
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double speedLimiter = 0.5;
+    private double directionFlipper = -1.0;
 
     private final SwerveRequest.FieldCentric drive =
             new SwerveRequest.FieldCentric();
@@ -57,18 +58,14 @@ public class AimAndShoot extends Command {
 
 
     @Override
-    public void initialize() {
-        //dontSeeTargetTimer.restart();
-        //onTargetTimer.restart();
-
-        
+    public void initialize() {        
         rotController.setTolerance(0.05);
     }
 
     @Override
     public void execute() {
-        double vx = xInput.getAsDouble();
-        double vy = yInput.getAsDouble();
+        double vx = xInput.getAsDouble() * MaxSpeed * speedLimiter * directionFlipper;
+        double vy = yInput.getAsDouble() * MaxSpeed * speedLimiter * directionFlipper;
         if (vision.hasTargets()) {
             PhotonPipelineResult result = vision.getLatestResult();
             var targetOptional = result.getTargets().stream()
@@ -77,7 +74,6 @@ public class AimAndShoot extends Command {
 
             if (targetOptional.isPresent()) {
                 var target = targetOptional.get();
-                //dontSeeTargetTimer.reset();
 
     
                 // 1. Get Distance (Direct 3D vector, ignores height constants)
@@ -129,12 +125,9 @@ public class AimAndShoot extends Command {
                     .withRotationalRate(rotSpeed));
     
                 if (rotController.atSetpoint()) {
-                    //if (!onTargetTimer.isRunning()) {
-                    //    onTargetTimer.restart();
-                    //}
                     double correctedHorizontal = Math.hypot(correctedVx, correctedVy);
-
                     double correctedVelocity = correctedHorizontal / Math.cos(phi);
+
                     shooter.setVelocityTo(correctedVelocity);
                 } else {
                     shooter.stop();
@@ -171,8 +164,6 @@ public class AimAndShoot extends Command {
 
     @Override
     public boolean isFinished() {
-        //return dontSeeTargetTimer.hasElapsed(Constants.DONT_SEE_TAG_WAIT_TIME)
-        //    || onTargetTimer.hasElapsed(Constants.POSE_VALIDATION_TIME);
         return false;
     }
 }

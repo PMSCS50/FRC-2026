@@ -71,7 +71,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("alignToTag", new PV_Align(drivetrain, vision, vision.getBestTarget()));
         NamedCommands.registerCommand("climbAscend", new ClimbPull(climb));
         NamedCommands.registerCommand("climbDescend", new ClimbPush(climb));
-        NamedCommands.registerCommsnd("activeShooter", new AimAndShoot(drivetrain, vision, shooter));
+        //NamedCommands.registerCommsnd("activeShooter", new AimAndShoot(drivetrain, vision, shooter));
 
         vision.setDefaultCommand(new UpdateFieldToRobot(drivetrain, vision));
 
@@ -87,6 +87,10 @@ public class RobotContainer {
         
         
         joystick.x().onTrue(new PV_Align(drivetrain, vision));
+
+        joystick.rightTrigger(0.3).whileTrue(
+            new AimAndShoot(drivetrain,vision,shooter,joystick::getLeftY,joystick::getLeftX)
+        );
 
 
         drivetrain.setDefaultCommand(
