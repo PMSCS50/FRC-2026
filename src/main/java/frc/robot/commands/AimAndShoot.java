@@ -115,6 +115,7 @@ public class AimAndShoot extends Command {
                 double correction = MathUtil.angleModulus(correctedYaw - yaw);
                 correction = MathUtil.clamp(correction, -0.2, 0.2); //safety clamp so shit doesnt get too crazy
                 double bestYaw = yaw + correction;
+                double robotYaw = drivatrain.getPose().getRotation();
 
                 // 3. Control Loop
                 rotController.setSetpoint(bestYaw);
@@ -142,8 +143,11 @@ public class AimAndShoot extends Command {
                 shooter.stop();
             }
         } else {
-            drivetrain.setControl(drive.
-                withRotationalRate(0)
+            drivetrain.setControl(
+                drive
+                .withVelocityX(vx)
+                .withVelocityY(vy)
+                .withRotationalRate(0)
             );
             shooter.stop();
             return;
