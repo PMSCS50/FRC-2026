@@ -129,6 +129,39 @@ public class Shooter extends SubsystemBase {
         return wheelRPM;
     }
 
+
+    public double[] correctVandYaw(double dx, double dy, double yaw, double vxField, double vyField) {
+        double distance = Math.hypot(dx,dy);
+        double phi = Math.toRadians(shooterAngle);
+        //3. get field velocities
+        double unitX = dx / distance;
+        double unitY = dy / distance;
+
+        double vStationary = shooter.velocityFromDistance(distance);
+        double vHorizontal = vStationary * Math.cos(phi);
+
+        double desiredVx = vHorizontal * unitX;
+        double desiredVy = vHorizontal * unitY;
+
+        double correctedVx = desiredVx;
+        double correctedVy = desiredVy;
+
+        
+        //4. velocity and yaw correction based on field velocities
+        if (Math.hypot(vxField,vyField) > 0.01) {    
+            correctedVx -= vxField;
+            correctedVy -= vyField;
+
+            double correctedYaw = Math.atan2(correctedVy,correctedVx); 
+            double correction = MathUtil.angleModulus(correctedYaw - yaw);
+            //safety clamp so shit doesnt get too crazy
+            correction = MathUtil.clamp(correction, -0.2, 0.2); 
+            yaw += correction;
+        }
+        double[] corrections = {correctedVx, correctedVy, yaw};
+        return corrections;
+    }
+
     /** Stop the shooter. */
     public void stop() {
         this.setVelocityTo(0.0);

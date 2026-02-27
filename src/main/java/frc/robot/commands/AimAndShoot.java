@@ -88,41 +88,22 @@ public class AimAndShoot extends Command {
                 //2. get yaw
                 double yaw = Math.atan2(dy,dx);
                 double robotYaw = drivetrain.getPose().getRotation();
-                double bestYaw = yaw;
-
-                //3. get field velocities
-                double unitX = dx / distance;
-                double unitY = dy / distance;
-
-                double vStationary = shooter.velocityFromDistance(distance);
-                double vHorizontal = vStationary * Math.cos(phi);
-
-                double desiredVx = vHorizontal * unitX;
-                double desiredVy = vHorizontal * unitY;
-
-                double correctedVx = desiredVx;
-                double correctedVy = desiredVy;
                 
-                //4. velocity and yaw correction based on field velocities
-                if (Math.hypot(vx,vy) > 0.01) {    
-                    var fieldSpeeds = 
+                //3. get field speeds
+                var fieldSpeeds = 
                     ChassisSpeeds.fromRobotRelativeSpeeds(
                         speeds,
-                        drivetrain.getState().Pose.getRotation()
+                        robotYaw
                     );
 
-                    double vxField = fieldSpeeds.vxMetersPerSecond;
-                    double vyField = fieldSpeeds.vyMetersPerSecond;
+                double vxField = fieldSpeeds.vxMetersPerSecond;
+                double vyField = fieldSpeeds.vyMetersPerSecond;
 
-                    correctedVx -= vxField;
-                    correctedVy -= vyField;
-
-                    double correctedYaw = Math.atan2(correctedVy,correctedVx); 
-                    double correction = MathUtil.angleModulus(correctedYaw - yaw);
-                    //safety clamp so shit doesnt get too crazy
-                    correction = MathUtil.clamp(correction, -0.2, 0.2); 
-                    bestYaw += correction;
-                }              
+                //4. Correct values of vv, vy (for shooter, not driving), and yaw
+                double[] correctedValues = shooter.correctVandYaw(dx,dy,yaw, vxField, vyField);
+                double correctedVx = correctedValues[0];
+                double correctedVy = correctedValues[1];
+                double bestYaw = correctedValues[2];
 
                 // 5. Control Loop
                 rotController.setSetpoint(bestYaw);
