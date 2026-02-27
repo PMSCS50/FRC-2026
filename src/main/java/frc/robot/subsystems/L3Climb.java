@@ -27,7 +27,7 @@ public class Climb extends SubsystemBase {
     private final SparkMax climbMotor4 = new SparkMax(ClimbConstants.climbMotor4CanId, MotorType.kBrushless);
 
     private RelativeEncoder climbEncoder = climbMotor1.getEncoder();
-    private RelativeEncoder climbEncoderSlider = climbMotor3.getEncoder(); 
+    private RelativeEncoder sliderEncoder = climbMotor3.getEncoder(); 
 
     private final DigitalInput limitSwitchHook = new DigitalInput(1);
     private final DigitalInput limitSwitchTop = new DigitalInput(2);
@@ -81,7 +81,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void slideOut() {
-        if (climbEncoderSlider >= 4) {
+        if (getSliderDistance() >= 4) {
             climbEncoder3.set(0);
         } else {
             climbMotor3.set(ClimbConstants.slideSpeed);
@@ -118,12 +118,16 @@ public class Climb extends SubsystemBase {
     }
     
     
-    public double getDistance(RelativeEncoder climbEncoder) {
+    public double getDistance() {
         double climbMotorRadius = 0.689;
         double distance = climbEncoder.getPosition() * 2 * Math.PI * climbMotorRadius;
         return distance;
     }
 
+    public double getSliderDistance() {
+        double climbMotorRadius = 0.689;
+        double distance = sliderEncoder.getPosition() * 2 * Math.PI * climbMotorRadius
+    }
 
 
 }
