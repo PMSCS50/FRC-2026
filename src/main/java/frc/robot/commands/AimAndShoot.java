@@ -90,31 +90,33 @@ public class AimAndShoot extends Command {
                 double robotYaw = drivetrain.getPose().getRotation();
                 double bestYaw = yaw;
 
-                //2.5. Yaw correction if robot is moving
-                if (Math.abs(vx) > 0.01 && Math.abs(vy) > 0.01) {
-                    double unitX = dx / distance;
-                    double unitY = dy / distance;
-                    double vStationary = shooter.velocityFromDistance(distance);
+                //3. get field velocities
+                double unitX = dx / distance;
+                double unitY = dy / distance;
 
-                    double vHorizontal = vStationary * Math.cos(phi);
+                double vStationary = shooter.velocityFromDistance(distance);
+                double vHorizontal = vStationary * Math.cos(phi);
 
-                    double desiredVx = vHorizontal * unitX;
-                    double desiredVy = vHorizontal * unitY;
+                double desiredVx = vHorizontal * unitX;
+                double desiredVy = vHorizontal * unitY;
 
-                    var speeds = drivetrain.getSpeeds();
-
+                double correctedVx = desiredVx;
+                double correctedVy = desiredVy;
+                
+                //4. velocity and yaw correction based on field velocities
+                if (Math.hypot(vx,vy) > 0.01) {    
                     var fieldSpeeds = 
-                        ChassisSpeeds.fromRobotRelativeSpeeds(
-                            speeds,
-                            drivetrain.getState().Pose.getRotation()
-                        );
+                    ChassisSpeeds.fromRobotRelativeSpeeds(
+                        speeds,
+                        drivetrain.getState().Pose.getRotation()
+                    );
 
                     double vxField = fieldSpeeds.vxMetersPerSecond;
                     double vyField = fieldSpeeds.vyMetersPerSecond;
 
-                    double correctedVx = desiredVx - vxField;
-                    double correctedVy = desiredVy - vyField;
-                    
+                    correctedVx -= vxField;
+                    correctedVy -= vyField;
+
                     double correctedYaw = Math.atan2(correctedVy,correctedVx); 
                     double correction = MathUtil.angleModulus(correctedYaw - yaw);
                     //safety clamp so shit doesnt get too crazy
@@ -122,7 +124,7 @@ public class AimAndShoot extends Command {
                     bestYaw += correction;
                 }              
 
-                // 3. Control Loop
+                // 5. Control Loop
                 rotController.setSetpoint(bestYaw);
                 double rotSpeed = rotController.calculate(robotYaw);
                 drivetrain.setControl(
