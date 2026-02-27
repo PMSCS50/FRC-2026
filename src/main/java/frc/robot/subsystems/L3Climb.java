@@ -109,7 +109,7 @@ public class Climb extends SubsystemBase {
     
     
     public double getDistance() {
-        double climbMotorRadius = 0; //radius in inches
+        double climbMotorRadius = 0.689;
         double distance = climbEncoder.getPosition() * 2 * Math.PI * climbMotorRadius;
         return distance;
     }

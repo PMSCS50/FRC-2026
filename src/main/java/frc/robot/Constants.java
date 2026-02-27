@@ -61,7 +61,7 @@ public final class Constants {
         public static final int climbMotor2CanId = 6;
         public static final double climbSpeed = 0.78;
         public static final double climbMax = 0;
-        public static final double slideSpeed = 0;
+        public static final double slideSpeed = 1;
       }
 
       public static final class ShooterConstants {
