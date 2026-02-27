@@ -67,7 +67,7 @@ public final class Constants {
         public static final int kickerMotor1CanId = 7;
         public static final int kickerMotor2CanId = 8;
 
-        public static final double kickerMotorPower = 0.59;
+        public static final double kickerMotorPower = 0.3;
         /*
         public static final int coralRoller2CanId = 22;
     

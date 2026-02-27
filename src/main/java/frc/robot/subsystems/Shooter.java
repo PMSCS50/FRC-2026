@@ -47,10 +47,7 @@ public class Shooter extends SubsystemBase {
     final SparkMax kickerMotor1 = new SparkMax(ShooterConstants.kickerMotor1CanId, MotorType.kBrushless);
     final SparkMax kickerMotor2 = new SparkMax(ShooterConstants.kickerMotor2CanId, MotorType.kBrushless);
 
-
     private final VelocityVoltage velocityRequest;
-
-
 
     private double velocity = 0.0;
     private double shooterAngle = 70.0; //shooter angle

@@ -74,7 +74,6 @@ public class AimAndShoot extends Command {
 
             if (targetOptional.isPresent()) {
                 var target = targetOptional.get();
-
     
                 // 1. Get Distance (Direct 3D vector, ignores height constants)
                 var translation = target.getBestCameraToTarget().getTranslation();
@@ -84,7 +83,7 @@ public class AimAndShoot extends Command {
                 double dy = translation.getY(); //horizontal distance to the hub
                 
                 double distance = Math.hypot(dx,dy);
-                double phi = Math.toRadians(70);
+                
                 //2. get yaw
                 double yaw = Math.atan2(dy,dx);
                 double robotYaw = drivetrain.getPose().getRotation();
