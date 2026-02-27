@@ -26,7 +26,8 @@ public class Climb extends SubsystemBase {
     private final SparkMax climbMotor3 = new SparkMax(ClimbConstants.climbMotor3CanId, MotorType.kBrushless);
     private final SparkMax climbMotor4 = new SparkMax(ClimbConstants.climbMotor4CanId, MotorType.kBrushless);
 
-    private RelativeEncoder climbEncoder = climbMotor1.getEncoder(); 
+    private RelativeEncoder climbEncoder = climbMotor1.getEncoder();
+    private RelativeEncoder climbEncoderSlider = climbMotor3.getEncoder(); 
 
     private final DigitalInput limitSwitchHook = new DigitalInput(1);
     private final DigitalInput limitSwitchTop = new DigitalInput(2);
@@ -80,11 +81,20 @@ public class Climb extends SubsystemBase {
     }
 
     public void slideOut() {
-        climbMotor3.set(ClimbConstants.slideSpeed);
+        if (climbEncoderSlider >= 4) {
+            climbEncoder3.set(0);
+        } else {
+            climbMotor3.set(ClimbConstants.slideSpeed);
+        }
     }
 
     public void slideIn() {
-        climbMotor3.set(ClimbConstants.slideSpeed);
+        double current = climbMotor3.getOutputCurrent();
+        if (current > 30) {
+            climbMotor3.set(0);
+        } else {
+            climbMotor3.set(-ClimbConstants.slideSpeed);
+        }
     }
 
     public void stopClimb() {
@@ -108,7 +118,7 @@ public class Climb extends SubsystemBase {
     }
     
     
-    public double getDistance() {
+    public double getDistance(RelativeEncoder climbEncoder) {
         double climbMotorRadius = 0.689;
         double distance = climbEncoder.getPosition() * 2 * Math.PI * climbMotorRadius;
         return distance;
