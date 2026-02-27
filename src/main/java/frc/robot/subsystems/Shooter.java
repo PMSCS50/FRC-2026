@@ -133,7 +133,7 @@ public class Shooter extends SubsystemBase {
     public double[] correctVandYaw(double dx, double dy, double yaw, double vxField, double vyField) {
         double distance = Math.hypot(dx,dy);
         double phi = Math.toRadians(shooterAngle);
-        //3. get field velocities
+
         double unitX = dx / distance;
         double unitY = dy / distance;
 
@@ -147,7 +147,7 @@ public class Shooter extends SubsystemBase {
         double correctedVy = desiredVy;
 
         
-        //4. velocity and yaw correction based on field velocities
+        //velocity and yaw correction based on field velocities
         if (Math.hypot(vxField,vyField) > 0.01) {    
             correctedVx -= vxField;
             correctedVy -= vyField;
