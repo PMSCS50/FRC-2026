@@ -20,14 +20,17 @@ public class Climb extends SubsystemBase {
 
     private final SparkMaxConfig climbMotor1Config = new SparkMaxConfig();
     private final SparkMaxConfig climbMotor2Config = new SparkMaxConfig();
+    private final SparkMaxConfig slideMotor1Config = new SparkMaxConfig();
+    private final SparkMaxConfig slideMotor2Config = new SparkMaxConfig();
+
     private final SparkMax climbMotor1 = new SparkMax(L3ClimbConstants.climbMotor1CanId, MotorType.kBrushless);
     private final SparkMax climbMotor2 = new SparkMax(L3ClimbConstants.climbMotor2CanId, MotorType.kBrushless);
 
-    private final SparkMax climbMotor3 = new SparkMax(L3ClimbConstants.climbMotor3CanId, MotorType.kBrushless);
-    private final SparkMax climbMotor4 = new SparkMax(L3ClimbConstants.climbMotor4CanId, MotorType.kBrushless);
+    private final SparkMax slideMotor1 = new SparkMax(L3ClimbConstants.slideMotor1CanId, MotorType.kBrushless);
+    private final SparkMax slideMotor2 = new SparkMax(L3ClimbConstants.slideMotor2CanId, MotorType.kBrushless);
 
     private RelativeEncoder climbEncoder = climbMotor1.getEncoder();
-    private RelativeEncoder sliderEncoder = climbMotor3.getEncoder(); 
+    private RelativeEncoder sliderEncoder = slideMotor1.getEncoder(); 
 
     private final DigitalInput limitSwitchHook = new DigitalInput(1);
     private final DigitalInput limitSwitchTop = new DigitalInput(2);
@@ -37,21 +40,21 @@ public class Climb extends SubsystemBase {
 
     public Climb() {
         
-        SparkMaxConfig[] configs = {climbMotor1Config, climbMotor2Config, climbMotor3Config, climbMotor4Config};
+        SparkMaxConfig[] configs = {climbMotor1Config, climbMotor2Config, slideMotor1Config, slideMotor2Config};
         
         for (SparkMaxConfig climbMotorConfig : configs) {
-            climbMotor1Config
+            climbMotorConfig
                 //.inverted(true)
                 .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(40);
         }
         climbMotor1.configure(climbMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         climbMotor2.configure(climbMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        climbMotor3.configure(climbMotor3Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        climbMotor4.configure(climbMotor4Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        slideMotor3.configure(slideMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        slideMotor4.configure(slideMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         climbMotor2.follow(climbMotor1,true);
-        climbMotor4.follow(climbMotor3,true);
+        slideMotor2.follow(slideMotor1,true);
     }
 
     @Override
@@ -82,18 +85,18 @@ public class Climb extends SubsystemBase {
 
     public void slideOut() {
         if (getSliderDistance() >= 4) {
-            climbEncoder3.set(0);
+            slideMotor1.set(0);
         } else {
-            climbMotor3.set(L3ClimbConstants.slideSpeed);
+            slideMotor1.set(L3ClimbConstants.slideSpeed);
         }
     }
 
     public void slideIn() {
-        double current = climbMotor3.getOutputCurrent();
+        double current = slideMotor1.getOutputCurrent();
         if (current > 30) {
-            climbMotor3.set(0);
+            slideMotor1.set(0);
         } else {
-            climbMotor3.set(-L3ClimbConstants.slideSpeed);
+            slideMotor1.set(-L3ClimbConstants.slideSpeed);
         }
     }
 
@@ -126,7 +129,8 @@ public class Climb extends SubsystemBase {
 
     public double getSliderDistance() {
         double climbMotorRadius = 0.689;
-        double distance = sliderEncoder.getPosition() * 2 * Math.PI * climbMotorRadius
+        double distance = sliderEncoder.getPosition() * 2 * Math.PI * climbMotorRadius;
+        return distance;
     }
 
 

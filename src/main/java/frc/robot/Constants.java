@@ -74,8 +74,8 @@ public final class Constants {
       public static final class L3ClimbConstants {
         public static final int climbMotor1CanId = 11;
         public static final int climbMotor2CanId = 12;
-        public static final int climbMotor3CanId = 13;
-        public static final int climbMotor4CanId = 14;
+        public static final int slideMotor1CanId = 13;
+        public static final int slideMotor2CanId = 14;
         public static final double climbSpeed = 0.78;
         public static final double climbMax = 30;
         public static final double slideSpeed = 0.6;
