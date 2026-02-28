@@ -57,8 +57,6 @@ public final class Constants {
       public static final class ClimbConstants {
         public static final int climbMotor1CanId = 3;
         public static final int climbMotor2CanId = 4;
-        public static final int climbMotor1CanId = 5;
-        public static final int climbMotor2CanId = 6;
         public static final double climbSpeed = 0.78;
         public static final double climbMax = 0;
         public static final double slideSpeed = 1;
@@ -71,14 +69,16 @@ public final class Constants {
         public static final int kickerMotor2CanId = 10;
 
         public static final double kickerMotorPower = 0.3;
-        /*
-        public static final int coralRoller2CanId = 22;
-    
-        public static final double chuteSpeed = .7;
-        public static final double rollerSlowSpeed = 0.175;
-        public static final double rollerFastSpeed = 0.4;
-        public static final double rollerBack = -0.2;
-        */
+      }
+
+      public static final class L3ClimbConstants {
+        public static final int climbMotor1CanId = 11;
+        public static final int climbMotor2CanId = 12;
+        public static final int climbMotor3CanId = 13;
+        public static final int climbMotor4CanId = 14;
+        public static final double climbSpeed = 0.78;
+        public static final double climbMax = 30;
+        public static final double slideSpeed = 0.6;
       }
 
       public static final class VisionConstants{

@@ -5,7 +5,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.L3ClimbConstants;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -20,11 +20,11 @@ public class Climb extends SubsystemBase {
 
     private final SparkMaxConfig climbMotor1Config = new SparkMaxConfig();
     private final SparkMaxConfig climbMotor2Config = new SparkMaxConfig();
-    private final SparkMax climbMotor1 = new SparkMax(ClimbConstants.climbMotor1CanId, MotorType.kBrushless);
-    private final SparkMax climbMotor2 = new SparkMax(ClimbConstants.climbMotor2CanId, MotorType.kBrushless);
+    private final SparkMax climbMotor1 = new SparkMax(L3ClimbConstants.climbMotor1CanId, MotorType.kBrushless);
+    private final SparkMax climbMotor2 = new SparkMax(L3ClimbConstants.climbMotor2CanId, MotorType.kBrushless);
 
-    private final SparkMax climbMotor3 = new SparkMax(ClimbConstants.climbMotor3CanId, MotorType.kBrushless);
-    private final SparkMax climbMotor4 = new SparkMax(ClimbConstants.climbMotor4CanId, MotorType.kBrushless);
+    private final SparkMax climbMotor3 = new SparkMax(L3ClimbConstants.climbMotor3CanId, MotorType.kBrushless);
+    private final SparkMax climbMotor4 = new SparkMax(L3ClimbConstants.climbMotor4CanId, MotorType.kBrushless);
 
     private RelativeEncoder climbEncoder = climbMotor1.getEncoder();
     private RelativeEncoder sliderEncoder = climbMotor3.getEncoder(); 
@@ -67,7 +67,7 @@ public class Climb extends SubsystemBase {
             if (!limitSwitchTop.get()) {
                 climbMotor1.set(0);
             } else {       
-                climbMotor1.set(ClimbConstants.climbSpeed);
+                climbMotor1.set(L3ClimbConstants.climbSpeed);
             }
         }
     }
@@ -76,7 +76,7 @@ public class Climb extends SubsystemBase {
         if (limitSwitchBottom.get()) {
             climbMotor1.set(0);
         } else {
-            climbMotor1.set(-ClimbConstants.climbSpeed);
+            climbMotor1.set(-L3ClimbConstants.climbSpeed);
         }
     }
 
@@ -84,7 +84,7 @@ public class Climb extends SubsystemBase {
         if (getSliderDistance() >= 4) {
             climbEncoder3.set(0);
         } else {
-            climbMotor3.set(ClimbConstants.slideSpeed);
+            climbMotor3.set(L3ClimbConstants.slideSpeed);
         }
     }
 
@@ -93,7 +93,7 @@ public class Climb extends SubsystemBase {
         if (current > 30) {
             climbMotor3.set(0);
         } else {
-            climbMotor3.set(-ClimbConstants.slideSpeed);
+            climbMotor3.set(-L3ClimbConstants.slideSpeed);
         }
     }
 
@@ -102,7 +102,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void reset(){
-        climbMotor1.set(-ClimbConstants.climbSpeed);
+        climbMotor1.set(-L3ClimbConstants.climbSpeed);
     }
     
     public boolean getHookLimit() {
