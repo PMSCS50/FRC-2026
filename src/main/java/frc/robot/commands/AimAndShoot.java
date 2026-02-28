@@ -84,7 +84,7 @@ public class AimAndShoot extends Command {
                 
                 double distance = Math.hypot(dx,dy);
                 
-                //2. get yaw
+                //2. get target and robot yaw
                 double yaw = Math.atan2(dy,dx);
                 double robotYaw = drivetrain.getPose().getRotation();
                 

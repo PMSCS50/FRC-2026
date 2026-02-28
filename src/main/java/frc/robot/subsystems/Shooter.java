@@ -50,13 +50,15 @@ public class Shooter extends SubsystemBase {
     private final VelocityVoltage velocityRequest;
 
     private double velocity = 0.0;
-    private double shooterAngle = 70.0; //shooter angle
+    private double shooterAngle = 70.0; //shooter angle in degrees
+    private double phi = Math.toRadians(shooterAngle); //shooter angle in radians, for calculations
     private double shooterHeight = 0.508; //How high the shooter is from the ground (meters)
 
     public Shooter() {
         //TalonFX shooterMotorConfig
         configureShooterMotor(shooterMotor1Config);
         configureShooterMotor(shooterMotor2Config);
+        shooterMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         shooterMotor1.getConfigurator().apply(shooterMotor1Config);
         shooterMotor2.getConfigurator().apply(shooterMotor2Config);
@@ -88,7 +90,6 @@ public class Shooter extends SubsystemBase {
         shooterMotorConfig.Slot0.kI = 0;
         shooterMotorConfig.Slot0.kD = 0;
 
-        shooterMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         shooterMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -102,7 +103,7 @@ public class Shooter extends SubsystemBase {
     //Calculates velocity for trajectory to get in shooter given distance; 
     public double velocityFromDistance(double x) {
         double y = 1.8288 - shooterHeight;
-        double phi = Math.toRadians(shooterAngle);
+
         double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) + shooterHeight - y)));       
         double dragFactor = (1 + 0.015*x) * 1.04;
         return dragFactor * v;
@@ -121,15 +122,14 @@ public class Shooter extends SubsystemBase {
     
     private double convertToRPM(double velocity) {
         double wheelRadius = 0.0508;
-        double c = 1;
+        double c = 1; //if we need to, tune this constant
         double wheelRPM = c * (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
         return wheelRPM;
     }
 
-
+    //corrects velocity and yaw based on current robot speeds
     public double[] correctVandYaw(double dx, double dy, double yaw, double vxField, double vyField) {
         double distance = Math.hypot(dx,dy);
-        double phi = Math.toRadians(shooterAngle);
 
         double unitX = dx / distance;
         double unitY = dy / distance;
