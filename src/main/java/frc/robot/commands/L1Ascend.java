@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class L1Ascend extends Command {
     
-    private final L3Climb climb = new L3Climb();
+    private L3Climb climb;
 
     public L1Ascend(L3Climb climb) {
         this.climb = climb;
@@ -34,7 +34,7 @@ public class L1Ascend extends Command {
 
     @Override
     public boolean isFinished() {
-        return climb.getClimbStatus() == "InnerArmsDoneHalfway";
+        return climb.getClimbStatus().equals("InnerArmsDoneHalfway");
     }
 
     @Override

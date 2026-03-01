@@ -6,8 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class L3Ascend extends Command {
     
-    private final L3Climb climb = new L3Climb();
-    private int climbStatus = 0;
+    private L3Climb climb;
 
     public L3Ascend(L3Climb climb) {
         this.climb = climb;
@@ -22,13 +21,14 @@ public class L3Ascend extends Command {
 
     @Override
     public void execute() {
-        if (climb.getClimbStatus() != "OuterArmsDone") {
+        if (!climb.getClimbStatus().equals("OuterArmsDone")) {
             climb.pullOuterArms();
         } else {
             climb.pullInnerArms();
         }
     }
 
+    @Override
     public void end() {
         climb.stopClimb();
     }
