@@ -38,9 +38,10 @@ public class L3Climb extends SubsystemBase {
     private final DigitalInput limitSwitchTop = new DigitalInput(2);
     private final DigitalInput limitSwitchBottom = new DigitalInput(3);
 
-    private double ClimbStatus = 0;
+    private String climbStatus = "climbDown";
 
-    public Climb() {
+
+    public L3Climb() {
         
         SparkMaxConfig[] configs = {climbMotor1Config, climbMotor2Config, slideMotor1Config, slideMotor2Config};
         
@@ -71,8 +72,9 @@ public class L3Climb extends SubsystemBase {
 
     public void pullOuterArms(){
         if (limitSwitchHook.get()) {
-            if (!limitSwitchTop.get()) {
+            if (!(limitSwitchTop.get() || limitSwitchBottom.get())) {
                 climbMotor1.set(0);
+                climbStatus = "outerArmsDone";
             } else {       
                 climbMotor1.set(L3ClimbConstants.climbSpeed);
             }
@@ -83,6 +85,7 @@ public class L3Climb extends SubsystemBase {
         if (limitSwitchHook.get()) {
             if (!limitSwitchTop.get()) {
                 climbMotor1.set(0);
+                climbStatus = "InnerArmsDone";
             } else {
                 climbMotor1.set(-L3ClimbConstants.climbSpeed);
             }
@@ -94,6 +97,7 @@ public class L3Climb extends SubsystemBase {
         if (limitSwitchHook.get()) {
             if (getDistance() <= 13) {
                 climbMotor1.set(0);
+                climbStatus = "InnerArmsDoneHalfway";
             } else {
                 climbMotor1.set(-L3ClimbConstants.climbSpeed);
             }
@@ -136,6 +140,9 @@ public class L3Climb extends SubsystemBase {
         return limitSwitchTop.get();
     }
     
+    public int getClimbStatus() {
+        return climbStatus;
+    }
     
     public double getDistance() {
         double climbMotorRadius = 0.125;
