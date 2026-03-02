@@ -14,21 +14,26 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.EstimatedRobotPose;
 
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N6;
 
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+
 public class VisionSubsystem extends SubsystemBase {
 
     private final PhotonCamera camera;
     private PhotonTrackedTarget target;
+    
+    private final CommandSwerveDrivetrain drivetrain;
 
     public static final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
     private final PhotonPoseEstimator photonPoseEstimator;
+
+    private Optional<EstimatedRobotPose> fieldToRobot;
 
     // Robot → Camera
     private static final Transform3d ROBOT_TO_CAMERA =
@@ -43,9 +48,10 @@ public class VisionSubsystem extends SubsystemBase {
     // TAG → ROBOT (this is the important one)
     private Transform3d tagToRobot = null;
 
-    public VisionSubsystem(String cameraName) {
+    public VisionSubsystem(String cameraName, CommandSwerveDrivetrain drivetrain) {
         camera = new PhotonCamera(cameraName);
         this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagLayout, ROBOT_TO_CAMERA);
+        this.drivetrain = drivetrain;
     }
 
     //These two methods are only for other commands and classes. We should not be using them in here
@@ -78,6 +84,15 @@ public class VisionSubsystem extends SubsystemBase {
 
         // Tag → Robot (MATCHES LIMELIGHT TARGET SPACE)
         tagToRobot = robotToTag.inverse();
+
+
+        fieldToRobot = vision.estimateMultiTagPose();
+        fieldToRobot.ifPresent(
+            erp -> {
+                Matrix<N6, N1> visionStdDevs = vision.getEstimationStdDevs();
+                drivetrain.addVisionMeasurement(erp.estimatedPose.toPose3d(), erp.timestampSeconds, visionStdDevs);
+            }
+        );
     }
 
     public boolean hasTargets() {
@@ -119,9 +134,9 @@ public class VisionSubsystem extends SubsystemBase {
         return tagToRobot != null ? tagToRobot.getRotation().getZ() : 0.0;
     }
 
-    //--------------------------
-    //UpdateFieldToRobot helpers
-    //--------------------------
+    //----------------------------------
+    //Live FieldToRobot updating methods
+    //----------------------------------
 
     private Matrix<N6, N1> visionStdDevs = VecBuilder.fill(0,0,0,0,0,0);
 
@@ -169,7 +184,7 @@ public class VisionSubsystem extends SubsystemBase {
             rollPitchStd,  // Pitch
             yawStd         // Yaw
         );
-        }
+    }
 
     public Matrix<N6, N1> getEstimationStdDevs() {
         return visionStdDevs;

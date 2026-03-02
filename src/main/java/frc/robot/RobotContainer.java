@@ -29,9 +29,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AlgaeRollers;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -59,7 +58,8 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Climb climb = new Climb();
-    private final VisionSubsystem vision = new VisionSubsystem("Solid-State-Scouter");
+    private final Intake intake = new Intake();
+    private final VisionSubsystem vision = new VisionSubsystem("Solid-State-Scouter", drivetrain);
     private final Shooter shooter = new Shooter();
 
     /* Path follower */
