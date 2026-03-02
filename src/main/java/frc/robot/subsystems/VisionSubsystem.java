@@ -19,7 +19,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N6;
 
 public class VisionSubsystem extends SubsystemBase {
 
@@ -123,35 +123,55 @@ public class VisionSubsystem extends SubsystemBase {
     //UpdateFieldToRobot helpers
     //--------------------------
 
-    private Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.9, 0.9, Math.toRadians(10));
+    private Matrix<N6, N1> visionStdDevs = VecBuilder.fill(0,0,0,0,0,0);
 
     //Ambiguity of Photon poseEstimation
-    private void updateEstimationStdDevs(Optional<EstimatedRobotPose> estimatedPose,
-    List<PhotonTrackedTarget> targets) {
+    private void updateEstimationStdDevs(
+        Optional<EstimatedRobotPose> estimatedPose,
+        List<PhotonTrackedTarget> targets) {
+
+        if (estimatedPose.isEmpty() || targets.isEmpty()) {
+            return;
+        }
 
         int numTags = targets.size();
 
-        // Average distance from camera to visible AprilTags
         double avgDist = 0.0;
         for (PhotonTrackedTarget target : targets) {
-            avgDist += target.getBestCameraToTarget().getTranslation().getNorm();
+            avgDist += target.getBestCameraToTarget()
+                                .getTranslation()
+                                .getNorm();
         }
         avgDist /= numTags;
 
-        if (numTags >= 2) {
-            visionStdDevs = VecBuilder.fill(
-                    0.5 * avgDist,
-                    0.5 * avgDist,
-                    Math.toRadians(5));
-        } else {
-            visionStdDevs = VecBuilder.fill(
-                    1.0 * avgDist,
-                    1.0 * avgDist,
-                    Math.toRadians(10));
-        }
-    }
+        double xyStd;
+        double zStd;
+        double yawStd;
+        double rollPitchStd;
 
-    public Matrix<N3, N1> getEstimationStdDevs() {
+        if (numTags >= 2) {
+            xyStd = 0.4 * avgDist;
+            zStd = 0.6 * avgDist;
+            yawStd = Math.toRadians(4);
+            rollPitchStd = Math.toRadians(6);
+        } else {
+            xyStd = 1.0 * avgDist;
+            zStd = 1.5 * avgDist;
+            yawStd = Math.toRadians(10);
+            rollPitchStd = Math.toRadians(15);
+        }
+
+        visionStdDevs = VecBuilder.fill(
+            xyStd,         // X
+            xyStd,         // Y
+            zStd,          // Z
+            rollPitchStd,  // Roll
+            rollPitchStd,  // Pitch
+            yawStd         // Yaw
+        );
+        }
+
+    public Matrix<N6, N1> getEstimationStdDevs() {
         return visionStdDevs;
     }
 

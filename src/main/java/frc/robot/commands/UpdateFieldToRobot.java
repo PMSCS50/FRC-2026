@@ -7,7 +7,7 @@ import org.photonvision.EstimatedRobotPose;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N6;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -38,8 +38,8 @@ public class UpdateFieldToRobot extends Command {
         Optional<EstimatedRobotPose> fieldToRobot = vision.estimateMultiTagPose();
         fieldToRobot.ifPresent(
             erp -> {
-                Matrix<N3, N1> visionStdDevs = vision.getEstimationStdDevs();
-                drivetrain.addVisionMeasurement(erp.estimatedPose.toPose2d(), erp.timestampSeconds, visionStdDevs);
+                Matrix<N6, N1> visionStdDevs = vision.getEstimationStdDevs();
+                drivetrain.addVisionMeasurement(erp.estimatedPose.toPose3d(), erp.timestampSeconds, visionStdDevs);
             }
         );
 
