@@ -113,7 +113,7 @@ public class L3Climb extends SubsystemBase {
     }
 
     public void slideOut() {
-        if (getSliderDistance() >= 4) {
+        if (getSliderDistance() >= 3.5) {
             slideMotor1.set(0);
             slideStatus = "out";
         } else {
@@ -122,7 +122,7 @@ public class L3Climb extends SubsystemBase {
     }
 
     public void slideIn() {
-        if (getSliderDistance() <= 0.05) {
+        if (getSliderDistance() <= 0.5) {
             slideMotor1.set(0);
             slideStatus = "in";
         } else {
