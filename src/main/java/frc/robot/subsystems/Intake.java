@@ -74,7 +74,30 @@ public class Intake extends SubsystemBase {
             initializing = false;
         }
     }
+    
+    public void outitIntake() {
+        if (!initializing) return;
+             
+        double ampThreshold = 30;  
+        double timeoutSeconds = 2.0;
 
+        double current = pivotMotor.getOutputCurrent();
+
+        if (initTimer.hasElapsed(timeoutSeconds)) {
+            pivotMotor.set(0);
+            initializing = false;
+            return;
+        }
+
+        if (current < ampThreshold) {
+            pivotMotor.set(-IntakeConstants.pivotPower);
+        } else {
+            pivotMotor.set(0);
+            pivotEncoder.setPosition(0);
+            initializing = false;
+        }
+    }
+    
     public void startIntake() {
         intakeMotor.set(IntakeConstants.intakePower); 
     }
