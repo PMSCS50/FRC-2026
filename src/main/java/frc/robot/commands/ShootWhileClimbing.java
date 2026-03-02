@@ -39,7 +39,7 @@ public class ShootWhileClimbing extends Command {
         //new shooterHeight
         double z = driveTrain.getPose().getTranslation().getZ();
         double distance = 3.543578; // distance from climb to hub. No angling required nor possible
-        double velocity = shooter.velocityFromDistance();
+        double velocity = shooter.velocityFromDistance(distance, z, robotPitch);
 
         shooter.setVelocityTo(velocity);
     }
