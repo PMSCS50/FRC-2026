@@ -109,6 +109,16 @@ public class Shooter extends SubsystemBase {
         return dragFactor * v;
     }
 
+    //for shooting while climbing
+    public double velocityFromDistance(double x, double robotZ, double pitch) {
+        double y = 1.8288 - shooterHeight - robotZ;
+        double phi = phi + pitch;
+
+        double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) + shooterHeight - y)));       
+        double dragFactor = (1 + 0.015*x) * 1.04;
+        return dragFactor * v;
+    }
+
 
     public void setVelocityTo(double newVelocity) {
         velocity = newVelocity;
