@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor2.setControl(new Follower(shooterMotor1.getDeviceID(), MotorAlignmentValue.Opposed));
 
-        velocityRequest = new VelocityVoltage(0.0);
+        velocityRequest = new VelocityVoltage(0.0).withSlot(0);
 
         kickerMotor1Config
             // .inverted(true)
@@ -85,8 +85,9 @@ public class Shooter extends SubsystemBase {
         shooterMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        shooterMotorConfig.Slot0.kV = 0.1;
-        shooterMotorConfig.Slot0.kP = 0.1;
+        shooterMotorConfig.Slot0.kS = 0.1
+        shooterMotorConfig.Slot0.kV = 0.12;
+        shooterMotorConfig.Slot0.kP = 0.11;
         shooterMotorConfig.Slot0.kI = 0;
         shooterMotorConfig.Slot0.kD = 0;
 
