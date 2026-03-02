@@ -37,7 +37,7 @@ public class ShootWhileClimbing extends Command {
         //just in case robot angles itself (which it hopefully wont), i will factor that in shooting
         double robotPitch = drivetrain.getPose().getRotation().getY();
         //new shooterHeight
-        double z = driveTrain.getPose().getTranslation().getZ();
+        double z = driveTrain.getPose().getZ();
         double distance = 3.543578; // distance from climb to hub. No angling required nor possible
         double velocity = shooter.velocityFromDistance(distance, z, robotPitch);
 
