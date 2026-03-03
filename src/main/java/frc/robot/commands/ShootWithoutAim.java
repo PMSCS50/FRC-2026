@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystem.VisionSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class ShootWithoutAim extends Command {
     private Shooter shooter;
@@ -33,7 +35,7 @@ public class ShootWithoutAim extends Command {
         if (targetOptional.isPresent()) {
             var target = targetOptional.get();
 
-            var translation = target.getBestCameraToTarget().getTranslation();
+            var translation = target.getBestCameraToTarget().inverse().getTranslation();
             double aprilTagToHub = 0.610816; 
             
             double dx = translation.getX() + aprilTagToHub; //forward distance to hub (RobotToApriltagX + AprilTagToHubX)
