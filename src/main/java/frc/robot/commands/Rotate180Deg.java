@@ -24,7 +24,7 @@ public class Rotate180Deg extends Command {
     public void execute() {
         double omegaShenron = rotController.calculate(drivetrain.getPose().getRotation().getZ(), Math.PI);
         drivetrain.setControl(
-            drive.withVelocityX(0)
+            drive.with VelocityX(0)
                  .withVelocityY(0)
                  .withRotationalRate(omegaShenron)
         );
@@ -32,7 +32,7 @@ public class Rotate180Deg extends Command {
 
     @Override
     public boolean isFinished() {
-        return xController.atSetpoint();
+        return rotController.atSetpoint();
     }
 
     @Override
