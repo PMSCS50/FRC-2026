@@ -10,6 +10,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -71,7 +73,7 @@ public final class Constants {
 
         public static final double kickerMotorPower = 0.3;
 
-        public static final int HUB_TAG_ID = (ALLIANCE.equals("blue")) ? 26 : 10;
+        public static final int HUB_TAG_ID = (alliance == Alliance.Blue) ? 26 : 10;
       }
 
       public static final class L3ClimbConstants {
@@ -92,7 +94,7 @@ public final class Constants {
 
       }
 
-      public static final String ALLIANCE = "blue";
+      public static final Alliance alliance = DriverStation.getAlliance();
 
       public static final double BUCKET_AIM_TOLERANCE_DEG = 0.1;
 
