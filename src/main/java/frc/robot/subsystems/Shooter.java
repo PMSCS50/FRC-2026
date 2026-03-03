@@ -184,10 +184,10 @@ public class Shooter extends SubsystemBase {
         return velocity;
     }
 
-    public double getShooterRPM() {
+    public boolean atCorrectRPM() {
         double ticksPer100ms = shooterMotor1.getSelectedSensorVelocity();
         double rpm = ticksPer100ms * (10.0 / 245760); 
-        return rpm;
+        return rpm == convertToRPM(velocity);
     }
 
     /** Returns true if the shooter is currently running */

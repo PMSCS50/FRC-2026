@@ -118,6 +118,7 @@ public class AimAndShoot extends Command {
                     double correctedVelocity = correctedHorizontal / Math.cos(phi);
 
                     shooter.setVelocityTo(correctedVelocity);
+                    shooter.startKickerMotors();
                 } else {
                     shooter.stop();
                 }
@@ -138,6 +139,7 @@ public class AimAndShoot extends Command {
                 .withRotationalRate(0)
             );
             shooter.stop();
+            shooter.stopKickerMotors();
             return;
         }
 
