@@ -69,7 +69,7 @@ public class AimAndShoot extends Command {
         if (vision.hasTargets()) {
             PhotonPipelineResult result = vision.getLatestResult();
             var targetOptional = result.getTargets().stream()
-                            .filter(t -> t.getFiducialId() == 18)
+                            .filter(t -> t.getFiducialId() == ShooterConstants.HUB_TAG_ID)
                             .findFirst();
 
             if (targetOptional.isPresent()) {

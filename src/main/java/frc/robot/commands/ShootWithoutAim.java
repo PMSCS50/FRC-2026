@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.subsystems.Shooter;
+import frc.robot.constants.ShooterConstants;
 import frc.robot.subsystem.VisionSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -26,7 +27,7 @@ public class ShootWithoutAim extends Command {
         this.stopTimer = new Timer();
         PhotonPipelineResult result = vision.getLatestResult();
         targetOptional = result.getTargets().stream()
-                            .filter(t -> t.getFiducialId() == 18)
+                            .filter(t -> t.getFiducialId() == ShooterConstants.HUB_TAG_ID)
                             .findFirst();
     }
 
@@ -59,7 +60,7 @@ public class ShootWithoutAim extends Command {
     }
 
     @Override
-    public void end() {
+    public void end(boolean interrupted) {
         shooter.stop();
         shooter.stopKickerMotors();
     }

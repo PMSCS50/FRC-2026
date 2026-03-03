@@ -29,8 +29,8 @@ public class L1Ascend extends Command {
         }
     }
 
-    public void end() {
-
+    public void end(boolean interrupted) {
+        return;
     }
 
     @Override

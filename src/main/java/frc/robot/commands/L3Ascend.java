@@ -35,7 +35,7 @@ public class L3Ascend extends Command {
     }
 
     @Override
-    public void end() {
+    public void end(boolean interrupted) {
         climb.stopClimb();
     }
 

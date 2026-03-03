@@ -70,6 +70,8 @@ public final class Constants {
         public static final int kickerMotor2CanId = 10;
 
         public static final double kickerMotorPower = 0.3;
+
+        public static final int HUB_TAG_ID = (ALLIANCE.equals("blue")) ? 26 : 10;
       }
 
       public static final class L3ClimbConstants {
@@ -89,6 +91,8 @@ public final class Constants {
         public static final AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
       }
+
+      public static final String ALLIANCE = "blue";
 
       public static final double BUCKET_AIM_TOLERANCE_DEG = 0.1;
 

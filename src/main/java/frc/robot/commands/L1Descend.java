@@ -30,8 +30,8 @@ public class L1Descend extends Command {
         }
     }
 
-    public void end() {
-
+    public void end(boolean interrupted) {
+        return
     }
 
     @Override

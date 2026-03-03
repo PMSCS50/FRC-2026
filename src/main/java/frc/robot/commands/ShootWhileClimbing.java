@@ -45,7 +45,7 @@ public class ShootWhileClimbing extends Command {
     }
 
     @Override
-    public void end() {
+    public void end(boolean interrupted) {
         shooter.stop();
     }
 
