@@ -75,6 +75,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("intakeBack", new IntakeBack(intake));
         NamedCommands.registerCommand("shoot", new ShootWithoutAim(shooter, vision));
         NamedCommands.registerCommand("move1FootBack", new FiveDollarFootlong(drivetrain));
+        NamedCommands.registerCommand("rotate180Deg", new Rotate180Deg(drivetrain));
         //NamedCommands.registerCommsnd("activeShooter", new AimAndShoot(drivetrain, vision, shooter));
 
         vision.setDefaultCommand(new UpdateFieldToRobot(drivetrain, vision));

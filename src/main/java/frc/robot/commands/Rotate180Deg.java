@@ -2,19 +2,19 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
+import java.lang.Math;
 
-
-public class FiveDollarFootlong extends Command {
+public class Rotate180Deg extends Command {
     private CommandSwerveDrivetrain drivetrain;
-    private PIDController xController = new PIDController(1, 0, 0);
-    private double foot = -0.305;
+    private PIDController rotController = new PIDController(1, 0, 0);
+
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric();
 
-    public FiveDollarFootlong(CommandSwerveDrivetrain drivetrain) {
+    public Rotate180Deg(CommandSwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        xController.setTolerance(0.05);
+        rotController.setTolerance(0.05);
     }
-
+    
     @Override
     public void initialize() {
 
@@ -22,11 +22,11 @@ public class FiveDollarFootlong extends Command {
 
     @Override
     public void execute() {
-        double vx = xController.calculate(drivetrain.getPose().getX(), foot);
+        double omegaShenron = rotController.calculate(drivetrain.getPose().getRotation().getZ(), Math.PI);
         drivetrain.setControl(
-            drive.withVelocityX(xVel)
+            drive.withVelocityX(0)
                  .withVelocityY(0)
-                 .withRotationalRate(0)
+                 .withRotationalRate(omegaShenron)
         );
     }
 
@@ -42,3 +42,4 @@ public class FiveDollarFootlong extends Command {
 
 
 }
+
