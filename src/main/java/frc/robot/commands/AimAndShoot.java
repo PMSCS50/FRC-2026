@@ -118,9 +118,14 @@ public class AimAndShoot extends Command {
                     double correctedVelocity = correctedHorizontal / Math.cos(phi);
 
                     shooter.setVelocityTo(correctedVelocity);
-                    shooter.startKickerMotors();
+                    //once shooter is at right velocity, then start kickers to feed into shooter
+                    if (shooter.atCorrectRPM()) {
+                        shooter.startKickerMotors();
+                    }
+                    
                 } else {
                     shooter.stop();
+                    shooter.stopKickerMotors();
                 }
                 return; // Exit early since we found our target
             } else {
