@@ -31,8 +31,8 @@ public class AimAndShoot extends Command {
     private double speedLimiter = 0.5;
     private double directionFlipper = -1.0;
 
-    private final SwerveRequest.FieldCentric drive =
-            new SwerveRequest.FieldCentric();
+    private final SwerveRequest.RobotCentric drive =
+            new SwerveRequest.RobotCentric();
 
     public AimAndShoot(
             CommandSwerveDrivetrain drivetrain,
