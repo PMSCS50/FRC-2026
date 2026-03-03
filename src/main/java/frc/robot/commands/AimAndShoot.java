@@ -59,7 +59,7 @@ public class AimAndShoot extends Command {
 
     @Override
     public void initialize() {        
-        rotController.setTolerance(0.03);
+        rotController.setTolerance(0.07);
     }
 
     @Override
