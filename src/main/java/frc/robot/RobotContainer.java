@@ -33,7 +33,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.VisionSubsystem;
-
+import frc.robot.subsystems.L3Climb;
 
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -62,6 +62,8 @@ public class RobotContainer {
     private final VisionSubsystem vision = new VisionSubsystem("Solid-State-Scouter", drivetrain);
     private final Shooter shooter = new Shooter();
 
+    private final L3Climb oliverClimb = new L3Climb();
+
     /* Path follower */
     private SendableChooser<Command> autoChooser;
 
@@ -73,10 +75,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("climbDescend", new ClimbPush(climb));
         NamedCommands.registerCommand("startIntake", new StartIntake(intake));
         NamedCommands.registerCommand("intakeBack", new IntakeBack(intake));
-        NamedCommands.registerCommand("shoot", new ShootWithoutAim(shooter, vision));
         NamedCommands.registerCommand("move1FootBack", new FiveDollarFootlong(drivetrain));
         NamedCommands.registerCommand("rotate180Deg", new Rotate180Deg(drivetrain));
-        //NamedCommands.registerCommsnd("activeShooter", new AimAndShoot(drivetrain, vision, shooter));
+        NamedCommands.registerCommsnd("shoot", new AimAndShoot(drivetrain, vision, shooter, () -> 0, () -> 0));
+
+        //for olivers climb if we implement it
+        NamedCommands.registerCommand("L1Ascend", new L1Ascend(oliverClimb));
+        NamedCommands.registerCommand("L1Descend", new L1Descend(oliverClimb));
 
         vision.setDefaultCommand(new UpdateFieldToRobot(drivetrain, vision));
 

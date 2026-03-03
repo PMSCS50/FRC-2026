@@ -15,7 +15,6 @@ public class IntakeBack extends Command {
     @Override
     public void initialize() {
       intake.stopIntake();
-        
     }
 
     @Override
