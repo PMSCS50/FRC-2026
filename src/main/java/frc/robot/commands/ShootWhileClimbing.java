@@ -30,7 +30,7 @@ public class ShootWhileClimbing extends Command {
     }
 
     //Dumping the mag when on L3. 
-    //Note that z is just the height of the ladder, and that we need to fix that to our robot height.
+    //Note that z is just the height of the ladder at L3, and that we need to fix that to our robot height.
     @Override
     public void execute() {
         double z = 1.83134
@@ -38,6 +38,10 @@ public class ShootWhileClimbing extends Command {
         double velocity = shooter.velocityFromDistance(distance, z, robotPitch);
 
         shooter.setVelocityTo(velocity);
+
+        if (shooter.atCorrectRPM()) {
+                shooter.startKickerMotors();
+        }
     }
 
     @Override
