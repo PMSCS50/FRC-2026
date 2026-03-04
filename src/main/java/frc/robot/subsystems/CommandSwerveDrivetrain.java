@@ -264,39 +264,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * We can get the fieldToRobot pose by calling drivetrain.getPose();
     */
     @Override
-    public void addVisionMeasurement(Pose3d pose, double timestampSeconds, Matrix<N6, N1> visionStdDevs) {
+    public void addVisionMeasurement(Pose2d pose, double timestampSeconds, Matrix<N3, N1> visionStdDevs) {
 
         double xStd = visionStdDevs.get(0, 0);
         double yStd = visionStdDevs.get(1, 0);
-        double zStd = visionStdDevs.get(2, 0);
-        double rollStd = visionStdDevs.get(3, 0);
-        double pitchStd = visionStdDevs.get(4, 0);
-        double yawStd = visionStdDevs.get(5, 0);
+        double yawStd = visionStdDevs.get(2, 0);
 
         // Reject ambiguous measurements
-        if (xStd > 4.0 || yStd > 4.0 || zStd > 4.0 ||
-            rollStd > 1.5 || pitchStd > 1.5 || yawStd > 1.5) {
+        if (xStd > 4.0 || yStd > 4.0 || yawStd > 1.5) {
             return;
         }
 
         // Soft clamp
         xStd = Math.max(xStd, 0.05);
         yStd = Math.max(yStd, 0.05);
-        zStd = Math.max(zStd, 0.05);
-        rollStd = Math.max(rollStd, 0.02);
-        pitchStd = Math.max(pitchStd, 0.02);
         yawStd = Math.max(yawStd, 0.02);
 
-        Matrix<N6, N1> tunedStdDevs = VecBuilder.fill(
-            xStd, yStd, zStd,
-            rollStd, pitchStd, yawStd
-        );
+        Matrix<N3, N1> tunedStdDevs = VecBuilder.fill(xStd, yStd, yawStd);
 
         super.addVisionMeasurement(pose, timestampSeconds, tunedStdDevs);
     }
 
     //get robot pose
-    public Pose3d getPose() {
+    public Pose2d getPose() {
         return getState().Pose;
     }
 
