@@ -75,9 +75,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("climbDescend", new ClimbPush(climb));
         NamedCommands.registerCommand("startIntake", new StartIntake(intake));
         NamedCommands.registerCommand("intakeBack", new IntakeBack(intake));
-        NamedCommands.registerCommand("move1FootBack", new FiveDollarFootlong(drivetrain));
         NamedCommands.registerCommand("rotate180Deg", new Rotate180Deg(drivetrain));
-        NamedCommands.registerCommsnd("shoot", new AimAndShoot(drivetrain, vision, shooter, () -> 0, () -> 0));
+        NamedCommands.registerCommsnd("shoot", new ShootWithoutAim(shooter, vision));
+        NamedCommands.registerCommand("aimShoot", new AimAndShoot(drivetrain, vision, shooter, () -> 0, () -> 0));
 
         //for olivers climb if we implement it
         NamedCommands.registerCommand("L1Ascend", new L1Ascend(oliverClimb));

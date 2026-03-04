@@ -24,11 +24,12 @@ public class ShootWithoutAim extends Command {
 
     @Override
     public void initialize() {
-        this.stopTimer = new Timer();
         PhotonPipelineResult result = vision.getLatestResult();
         targetOptional = result.getTargets().stream()
                             .filter(t -> t.getFiducialId() == ShooterConstants.HUB_TAG_ID)
                             .findFirst();
+        
+        stopTimer = new Timer();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class ShootWithoutAim extends Command {
 
     @Override
     public boolean isFinished() {
-        return stopTimer.hasElapsed(10000);
+        return stopTimer.hasElapsed(2500);
     }
 
     @Override
