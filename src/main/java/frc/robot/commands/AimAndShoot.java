@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,7 +28,6 @@ public class AimAndShoot extends Command {
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double speedLimiter = 0.5;
-    private double directionFlipper = -1.0;
 
     private final SwerveRequest.RobotCentric drive =
             new SwerveRequest.RobotCentric();

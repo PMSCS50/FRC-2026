@@ -83,8 +83,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("L1Ascend", new L1Ascend(oliverClimb));
         NamedCommands.registerCommand("L1Descend", new L1Descend(oliverClimb));
 
-        vision.setDefaultCommand(new UpdateFieldToRobot(drivetrain, vision));
-
         PathPlannerAuto pathPlanner = new PathPlannerAuto("meOW");
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Chooser", autoChooser);
