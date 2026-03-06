@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
@@ -74,8 +75,9 @@ public class AimAndShoot extends Command {
                 var target = targetOptional.get();
     
                 // 1. Get Distance (Direct 3D vector, ignores height constants)
-                var translation = target.getBestCameraToTarget().inverse().getTranslation();
-                double aprilTagToHub = 0.610816; 
+                //This should actually be TargetToShooter btw. we need to mount camera for this.
+                var translation = target.getBestCameraToTarget()inverse().getTranslation();
+                double aprilTagToHub = -0.610816; //negative due to tagspace
                 
                 double dx = translation.getX() + aprilTagToHub; //forward distance to hub (RobotToApriltagX + AprilTagToHubX)
                 double dy = translation.getY(); //horizontal distance to the hub
@@ -85,20 +87,23 @@ public class AimAndShoot extends Command {
                 
                 //2. get target and robot yaw
                 double yaw = Math.atan2(dy,dx);
-                double robotYaw = drivetrain.getPose().getRotation().getZ();
+                double robotYaw = drivetrain.getPose().getRadians();
                 
                 //3. get field speeds
-                var fieldSpeeds = 
-                    ChassisSpeeds.fromRobotRelativeSpeeds(
-                        speeds,
-                        robotYaw
-                    );
+                var fieldSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(speeds, robotYaw);
 
                 double vxField = fieldSpeeds.vxMetersPerSecond;
                 double vyField = fieldSpeeds.vyMetersPerSecond;
 
+                //3.5 convert fieldSpeeds into tagSpeeds.
+                double cos = Math.cos(yaw);
+                double sin = Math.sin(yaw);
+
+                double vxTag =  vxField * cos + vyField * sin;
+                double vyTag = -vxField * sin + vyField * cos;
+
                 //4. find and correct values of vv, vy (for shooter, not driving), and yaw
-                double[] correctedValues = shooter.correctVandYaw(dx,dy,yaw, vxField, vyField);
+                double[] correctedValues = shooter.correctVandYaw(dx,dy,yaw, vxTag, vyTag);
                 double correctedVx = correctedValues[0];
                 double correctedVy = correctedValues[1];
                 double bestYaw = correctedValues[2];
@@ -116,7 +121,7 @@ public class AimAndShoot extends Command {
                     double correctedVelocity = correctedHorizontal / Math.cos(phi);
 
                     shooter.setVelocityTo(correctedVelocity);
-                    //once shooter is at right velocity, then start kickers to feed into shooter
+                    //kickermotors should start when velocity is at right speed but we will do that later
                     shooter.startKickerMotors();
                     
                 } else {

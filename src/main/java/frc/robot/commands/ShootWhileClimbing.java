@@ -33,7 +33,7 @@ public class ShootWhileClimbing extends Command {
     //Note that z is just the height of the ladder at L3, and that we need to fix that to our robot height.
     @Override
     public void execute() {
-        double z = 1.83134
+        double z = 1.83134;
         double distance = 3.543578; // distance from climb to hub. No angling required nor possible
         double velocity = shooter.velocityFromDistance(distance, z, robotPitch);
 

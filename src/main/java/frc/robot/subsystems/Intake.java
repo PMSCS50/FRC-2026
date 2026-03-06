@@ -22,7 +22,7 @@ public class Intake extends SubsystemBase {
 
     //for starting the intake
     private final Timer initTimer = new Timer();
-    private boolean initializing = false;
+    public boolean initializing = false;
     
     public Intake() {
         pivotMotorConfig
