@@ -1,0 +1,154 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Path1"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL4"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "scoreOut"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "stopCoralRollers"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL1"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Path2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Path3"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "scoreOut"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "stopCoralRollers"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Path4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Path3"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "scoreOut"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "stopCoralRollers"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL1"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

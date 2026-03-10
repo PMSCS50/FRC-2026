@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignReef"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreOut"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go Backwards Middle"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -1,0 +1,133 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 Stage 1 (Blue NP)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignReef"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.75
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreOut"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 Stage 2 (Blue Upper)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreOut"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopCoralRollers"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 Stage 3 (Blue Upper)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignReef"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreOut"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

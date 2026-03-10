@@ -1,0 +1,92 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 Stage 1 (Blue P)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreOutFast"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "L4 Stage 2 (Blue P)"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "elevatorL1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 Stage 3 (Blue P)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignReef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "preRoller"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL4Actual"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreOut"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

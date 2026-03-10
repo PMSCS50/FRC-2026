@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L4 Stage 1 (Blue NP)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignReef"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "scoreOut"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Go Backwards NP"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "elevatorL1"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7977272727272726,
+        "y": 6.742258522727273
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.4757954545454537,
+        "y": 6.074161931818182
+      },
+      "isLocked": false,
+      "linkedName": "Source Visit Blue Upper"
+    },
+    {
+      "anchor": {
+        "x": 3.609715909090909,
+        "y": 5.236548295454545
+      },
+      "prevControl": {
+        "x": 3.1111363636363634,
+        "y": 6.014332386363635
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -58.10920819815426
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -54.904183212973805
+  },
+  "useDefaultConstraints": true
+}
