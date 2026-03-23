@@ -106,7 +106,7 @@ public class Shooter extends SubsystemBase {
         double y = 1.8288 - shooterHeight;
 
         double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) + shooterHeight - y)));       
-        double dragFactor = (1 + 0.015*x) * 1.04;
+        double dragFactor = (1 + 0.0000001*x*x) * 1.031;
         return dragFactor * v;
     }
 
@@ -115,8 +115,8 @@ public class Shooter extends SubsystemBase {
         double y = 1.8288 - shooterHeight - robotZ;
         double phi = phi + pitch;
 
-        double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) + shooterHeight - y)));       
-        double dragFactor = (1 + 0.015*x) * 1.04;
+        double v = Math.sqrt((9.807 * x * x) / (2 * Math.cos(phi) * Math.cos(phi) * (x * Math.tan(phi) - y)));       
+        double dragFactor = (1 + 0.0000001*x*x) * 1.031;
         return dragFactor * v;
     }
 
@@ -137,8 +137,8 @@ public class Shooter extends SubsystemBase {
     
     private double convertToRPM(double velocity) {
         double wheelRadius = 0.0508;
-        double c = 1; //if we need to, tune this constant
-        double wheelRPM = c * (velocity * 60.0) / (2.0 * Math.PI * wheelRadius);
+        double slip = 0.48;
+        double wheelRPM = (velocity * 60.0) / (slip * Math.PI * wheelRadius);
         return wheelRPM;
     }
 
